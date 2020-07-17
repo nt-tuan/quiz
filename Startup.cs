@@ -22,17 +22,14 @@ namespace dmc_auth
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      // services.AddDbContext<ApplicationDbContext>(options =>
-      //     options.UseNpgsql(Environment.GetEnvironmentVariable("DATABASE_URL")));
       services.AddDbContext<ApplicationDbContext>(options =>
       options.UseNpgsql(Configuration.GetConnectionString("DatabaseURL")));
-
 
       services.AddDefaultIdentity<ApplicationUser>()
           .AddEntityFrameworkStores<ApplicationDbContext>();
 
-      services.AddControllersWithViews();
-      services.AddRazorPages();
+      // services.AddControllersWithViews();
+      // services.AddRazorPages();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,14 +54,11 @@ namespace dmc_auth
 
       app.UseRouting();
 
-      app.UseAuthentication();
-      app.UseAuthorization();
+      // app.UseAuthentication();
+      // app.UseAuthorization();
       app.UseEndpoints(endpoints =>
       {
-        endpoints.MapControllerRoute(
-                  name: "default",
-                  pattern: "{controller}/{action=Index}/{id?}");
-        endpoints.MapRazorPages();
+        endpoints.MapDefaultControllerRoute();
       });
     }
   }

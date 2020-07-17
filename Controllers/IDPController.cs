@@ -27,6 +27,13 @@ namespace dmc_auth.Controllers
       _userManager = userManager;
     }
 
+    [HttpGet]
+    [Route("health")]
+    public ActionResult Health()
+    {
+      return Ok();
+    }
+
     [HttpPost]
     [Route("login")]
     public async Task<ActionResult> Login(LoginModel model)
