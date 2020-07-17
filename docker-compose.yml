@@ -1,0 +1,25 @@
+version: "3.4"
+
+services:
+  dmc_auth:
+    image: dmc_auth
+    build: .
+    ports:
+      - 5000:5000
+    depends_on:
+      - db
+    environment:
+      ConnectionStrings__DatabaseURL: Host=db;Database=dmc_auth;Username=dmc_auth;Password=dmc_auth
+      ASPNETCORE_URLS: http://0.0.0.0:5000
+      AUTH_URL: http://auth-admin.domesco.com
+      CONSENT_REQUEST_URL: https://auth-admin.domesco.com/oauth2/auth/requests/consent
+      AUTH_ACCEPT_URL: https://auth-admin.domesco.com/oauth2/auth/requests/login/accept
+      REMEMBER_DURATION: 2592000
+
+  db:
+    image: postgres:11.2-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: dmc_auth
+      POSTGRES_PASSWORD: dmc_auth
