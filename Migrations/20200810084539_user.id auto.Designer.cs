@@ -10,8 +10,8 @@ using dmc_auth.Data;
 namespace dmc_auth.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200716084717_initdatabase")]
-    partial class initdatabase
+    [Migration("20200810084539_user.id auto")]
+    partial class useridauto
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -129,7 +129,7 @@ namespace dmc_auth.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("dmc_auth.Models.ApplicationRole", b =>
+            modelBuilder.Entity("dmc_auth.Entities.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -158,9 +158,10 @@ namespace dmc_auth.Migrations
                     b.ToTable("AspNetRoles");
                 });
 
-            modelBuilder.Entity("dmc_auth.Models.ApplicationUser", b =>
+            modelBuilder.Entity("dmc_auth.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
@@ -227,7 +228,7 @@ namespace dmc_auth.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("dmc_auth.Models.Department", b =>
+            modelBuilder.Entity("dmc_auth.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -276,7 +277,7 @@ namespace dmc_auth.Migrations
                     b.ToTable("Departments");
                 });
 
-            modelBuilder.Entity("dmc_auth.Models.Employee", b =>
+            modelBuilder.Entity("dmc_auth.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -304,7 +305,7 @@ namespace dmc_auth.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("dmc_auth.Models.ApplicationRole", null)
+                    b.HasOne("dmc_auth.Entities.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -313,7 +314,7 @@ namespace dmc_auth.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("dmc_auth.Models.ApplicationUser", null)
+                    b.HasOne("dmc_auth.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -322,7 +323,7 @@ namespace dmc_auth.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("dmc_auth.Models.ApplicationUser", null)
+                    b.HasOne("dmc_auth.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -331,13 +332,13 @@ namespace dmc_auth.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("dmc_auth.Models.ApplicationRole", null)
+                    b.HasOne("dmc_auth.Entities.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("dmc_auth.Models.ApplicationUser", null)
+                    b.HasOne("dmc_auth.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -346,38 +347,38 @@ namespace dmc_auth.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("dmc_auth.Models.ApplicationUser", null)
+                    b.HasOne("dmc_auth.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("dmc_auth.Models.ApplicationUser", b =>
+            modelBuilder.Entity("dmc_auth.Entities.ApplicationUser", b =>
                 {
-                    b.HasOne("dmc_auth.Models.Employee", "Employee")
+                    b.HasOne("dmc_auth.Entities.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId");
                 });
 
-            modelBuilder.Entity("dmc_auth.Models.Department", b =>
+            modelBuilder.Entity("dmc_auth.Entities.Department", b =>
                 {
-                    b.HasOne("dmc_auth.Models.Employee", "Manager")
+                    b.HasOne("dmc_auth.Entities.Employee", "Manager")
                         .WithMany()
                         .HasForeignKey("ManagerId");
 
-                    b.HasOne("dmc_auth.Models.Department", "Parent")
+                    b.HasOne("dmc_auth.Entities.Department", "Parent")
                         .WithMany()
                         .HasForeignKey("ParentId");
                 });
 
-            modelBuilder.Entity("dmc_auth.Models.Employee", b =>
+            modelBuilder.Entity("dmc_auth.Entities.Employee", b =>
                 {
-                    b.HasOne("dmc_auth.Models.Department", "Department")
+                    b.HasOne("dmc_auth.Entities.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId");
 
-                    b.OwnsOne("dmc_auth.Models.Person", "Person", b1 =>
+                    b.OwnsOne("dmc_auth.Entities.Person", "Person", b1 =>
                         {
                             b1.Property<int>("EmployeeId")
                                 .HasColumnType("integer");

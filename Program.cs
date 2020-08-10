@@ -10,24 +10,29 @@ using Microsoft.Extensions.Logging;
 
 namespace dmc_auth
 {
-  public class Program
-  {
-    public static void Main(string[] args)
+    public class Program
     {
-      CreateHostBuilder(args).Build().Run();
-    }
+        public static void Main(string[] args)
+        {
+            CreateHostBuilder(args).Build().Run();
+        }
 
-    public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables()
-            .Build();
+        public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        .AddEnvironmentVariables()
+                .Build();
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+            .ConfigureLogging(logging =>
             {
-              webBuilder.UseStartup<Startup>();
-            });
-  }
+                logging.ClearProviders();
+                logging.AddConsole();
+            })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+    }
 }

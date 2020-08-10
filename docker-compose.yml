@@ -11,11 +11,15 @@ services:
     environment:
       ConnectionStrings__DatabaseURL: Host=db;Database=dmc_auth;Username=dmc_auth;Password=dmc_auth
       ASPNETCORE_URLS: http://0.0.0.0:5000
-      AUTH_URL: http://auth-admin.domesco.com
-      CONSENT_REQUEST_URL: https://auth-admin.domesco.com/oauth2/auth/requests/consent
-      AUTH_ACCEPT_URL: https://auth-admin.domesco.com/oauth2/auth/requests/login/accept
+      AUTH_URL: https://auth-admin.domesco.com
+      PUBLIC_AUTH_URL: https://auth.domesco.com
+      CLIENT_ID: idp
+      CLIENT_SECRET: AKNK2NNKH01N1OLNL1N6L109SBUX0C0BWJEBM0
       REMEMBER_DURATION: 2592000
-
+      INIT_ROLES_FILEPATH: /data/roles.json
+      INIT_USERS_FILEPATH: /data/users.json
+    volumes:
+      - ./Content:/data
   db:
     image: postgres:11.2-alpine
     ports:

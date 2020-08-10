@@ -1,0 +1,10 @@
+[
+  {
+    "name": "user.read",
+    "description": "Truy cập thông tin tài khoản"
+  },
+  {
+    "name": "user.write",
+    "description": "Cập nhật thông tin tài khoản"
+  }
+]
