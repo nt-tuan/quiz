@@ -13,6 +13,8 @@ namespace dmc_auth.Controllers.Models
     public ErrorResponse(string message)
     {
       this.message = message;
+      this.messages = new List<string>();
+      this.messages.Add(message);
     }
   }
 
