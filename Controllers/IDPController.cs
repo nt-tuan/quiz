@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using dmc_auth.Controllers.Models;
 using dmc_auth.Hydra;
 using dmc_auth.Hydra.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace dmc_auth.Controllers
 {
@@ -52,7 +53,7 @@ namespace dmc_auth.Controllers
       if (loginInfo.skip)
       {
         var user = await _userManager.FindByIdAsync(loginInfo.subject);
-        if (user == null) return BadRequest();
+        if (user == null) return BadRequest(IDPErrors.UserNotFound);
         loginInfo.username = user.UserName;
         return Ok(loginInfo);
       }
@@ -63,7 +64,11 @@ namespace dmc_auth.Controllers
     [Route("login")]
     public async Task<ActionResult<AcceptLoginResponse>> Login(Login model)
     {
-
+      var loginInfo = await _hydra.GetLoginInfo(model.login_challenge);
+      if (loginInfo.skip)
+      {
+        return await _hydra.AcceptLogin(new AcceptLoginRequest(loginInfo.subject), model.login_challenge);
+      }
       var appuser = await _userManager.FindByEmailAsync(model.username);
       if (appuser == null)
       {
