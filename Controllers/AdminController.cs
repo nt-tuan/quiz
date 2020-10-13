@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace CleanArchitecture.Web.Api
 {
@@ -25,13 +27,14 @@ namespace CleanArchitecture.Web.Api
     private readonly SignInManager<ApplicationUser> _signinManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
-    private readonly ApplicationDbContext _db;
+    private readonly ILogger<AdminController> _logger;
 
-    public AdminController(SignInManager<ApplicationUser> signinManager, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+    public AdminController(SignInManager<ApplicationUser> signinManager, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ILogger<AdminController> logger)
     {
       _signinManager = signinManager;
       _userManager = userManager;
       _roleManager = roleManager;
+      _logger = logger;
     }
 
     [HttpGet]
@@ -47,17 +50,42 @@ namespace CleanArchitecture.Web.Api
     [Route("users")]
     public async Task<ActionResult<List<UserResponse>>> AccountList([FromQuery] UserPagingQuery model)
     {
-      var query = _userManager.Users.Include(u => u.Employee).ThenInclude(u => u.Department).AsQueryable();
+      var query = _userManager.Users
+      .Include(u => u.Employee)
+      .ThenInclude(u => u.Department)
+      .AsQueryable();
       var users = await model.BuildQuery(query).ToListAsync();
       var res = new List<UserResponse>();
       foreach (var user in users)
       {
-        var resItem = new UserResponse(user);
         var roles = await _userManager.GetRolesAsync(user);
-        resItem.SetRoles(roles.ToList());
+        var resItem = new UserResponse(user, roles);
         res.Add(resItem);
       }
       return res;
+    }
+
+    [HttpPost]
+    [Route("user")]
+    public async Task<ActionResult<UserResponse>> CreateUser(CreateUserModel model)
+    {
+      var user = new ApplicationUser();
+      user.UserName = model.Username;
+      user.Email = model.Email;
+      user.LockoutEnd = model.LockoutEnd;
+      user.LockoutEnabled = model.LockoutEnable ?? false;
+      var result = await _userManager.CreateAsync(user, model.Password);
+      if (result.Succeeded)
+      {
+        var addRolesResult = await _userManager.AddToRolesAsync(user, model.Roles);
+        if (addRolesResult.Succeeded)
+        {
+          var response = new UserResponse(user, model.Roles);
+          return Ok(response);
+        }
+        return responseIdentityResultError(result);
+      }
+      return responseIdentityResultError(result);
     }
 
     [HttpGet]
@@ -65,8 +93,10 @@ namespace CleanArchitecture.Web.Api
     public async Task<ActionResult<UserResponse>> Detail(string id)
     {
       var user = await _userManager.Users.Include(u => u.Employee).ThenInclude(u => u.Department).FirstOrDefaultAsync(u => u.Id == id);
+
       if (user == null) return NotFound();
-      return new UserResponse(user);
+      var roles = await _userManager.GetRolesAsync(user);
+      return new UserResponse(user, roles);
     }
 
     [HttpPost]
@@ -100,12 +130,13 @@ namespace CleanArchitecture.Web.Api
       return Ok();
     }
 
-
     [HttpPost]
     [Route("changepassword")]
     public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
     {
-      var user = await _userManager.FindByNameAsync(_signinManager.Context.User.Identity.Name);
+      _logger.LogInformation(JsonConvert.SerializeObject(
+        ((ClaimsIdentity)User.Identity).Claims.Select(claim => new { claim.Type, claim.Value, claim.ValueType })));
+      var user = await _userManager.FindByNameAsync(User.Identity.Name);
       if (user == null)
         return NotFound();
       var rs = await _userManager.ChangePasswordAsync(user, model.oldPassword, model.newPassword);
@@ -176,7 +207,7 @@ namespace CleanArchitecture.Web.Api
       return responseIdentityResultError(identityResult);
     }
 
-    private IActionResult responseIdentityResultError(IdentityResult identityResult)
+    private BadRequestObjectResult responseIdentityResultError(IdentityResult identityResult)
     {
       var messages = identityResult.Errors.Select(u => $"{u.Code}: {u.Description}").ToList();
       var errResponse = new ErrorResponse();

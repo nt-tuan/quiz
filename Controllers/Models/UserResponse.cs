@@ -45,11 +45,11 @@ namespace dmc_auth.Controllers.Models
     public string id { get; set; }
     public string username { get; set; }
     public string email { get; set; }
-    public List<string> roles { get; set; }
+    public IList<string> roles { get; set; }
     public bool lockoutEnable { get; set; }
     public DateTimeOffset? lockoutEnd { get; set; }
     public EmployeeResponse employee { get; set; }
-    public UserResponse(ApplicationUser entity)
+    public UserResponse(ApplicationUser entity, IList<string> roles)
     {
       id = entity.Id;
       username = entity.UserName;
@@ -58,10 +58,6 @@ namespace dmc_auth.Controllers.Models
       email = entity.Email;
       if (entity.Employee != null)
         employee = new EmployeeResponse(entity.Employee);
-    }
-
-    public void SetRoles(List<string> roles)
-    {
       this.roles = roles;
     }
   }

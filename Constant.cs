@@ -8,8 +8,15 @@ namespace dmc_auth
     public const string ENV_PUBLIC_AUTH_URL = "PUBLIC_AUTH_URL";
     public const string ENV_CLIENT_ID = "CLIENT_ID";
     public const string ENV_CLIENT_SECRET = "CLIENT_SECRET";
-    public const string INIT_ROLES_FILE_PATH = "/data/roles.json";
-    public const string INIT_USERS_FILE_PATH = "/data/users.json";
+    public const string ENV_AUDIENCE = "AUDIENCE";
+    public static string INIT_ROLES_FILE_PATH
+    {
+      get { return Environment.GetEnvironmentVariable("INIT_ROLES_FILEPATH"); }
+    }
+    public static string INIT_USERS_FILE_PATH
+    {
+      get { return Environment.GetEnvironmentVariable("INIT_USERS_FILEPATH"); }
+    }
 
     public static string GetUserInfoURL()
     {
