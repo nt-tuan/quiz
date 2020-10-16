@@ -23,17 +23,12 @@ namespace dmc_auth.Controllers
   [Route("api")]
   [ApiController]
   public class IDPController : ControllerBase
-  {
-    ILogger<IDPController> _logger;
-    ApplicationDbContext _context;
-    UserManager<ApplicationUser> _userManager;
-    IHydra _hydra;
-    public IDPController(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
-    IHydra hydra,
-    ILogger<IDPController> logger)
-    {
-      _logger = logger;
-      _context = context;
+  {    
+    readonly UserManager<ApplicationUser> _userManager;
+    readonly IHydra _hydra;
+    public IDPController(UserManager<ApplicationUser> userManager,
+    IHydra hydra)
+    {      
       _userManager = userManager;
       _hydra = hydra;
     }
@@ -50,11 +45,11 @@ namespace dmc_auth.Controllers
     public async Task<ActionResult<LoginInfo>> GetLoginInfo(string login_challenge)
     {
       var loginInfo = await _hydra.GetLoginInfo(login_challenge);
-      if (loginInfo.skip)
+      if (loginInfo.Skip)
       {
-        var user = await _userManager.FindByIdAsync(loginInfo.subject);
+        var user = await _userManager.FindByIdAsync(loginInfo.Subject);
         if (user == null) return BadRequest(IDPErrors.UserNotFound);
-        loginInfo.username = user.UserName;
+        loginInfo.Username = user.UserName;
         return Ok(loginInfo);
       }
       return Ok(loginInfo);
@@ -64,26 +59,26 @@ namespace dmc_auth.Controllers
     [Route("login")]
     public async Task<ActionResult<AcceptLoginResponse>> Login(Login model)
     {
-      var loginInfo = await _hydra.GetLoginInfo(model.login_challenge);
-      if (loginInfo.skip)
+      var loginInfo = await _hydra.GetLoginInfo(model.LoginChallenge);
+      if (loginInfo.Skip)
       {
-        return await _hydra.AcceptLogin(new AcceptLoginRequest(loginInfo.subject), model.login_challenge);
+        return await _hydra.AcceptLogin(new AcceptLoginRequest(loginInfo.Subject), model.LoginChallenge);
       }
-      var appuser = await _userManager.FindByEmailAsync(model.username);
+      var appuser = await _userManager.FindByEmailAsync(model.Username);
       if (appuser == null)
       {
-        appuser = await _userManager.FindByNameAsync(model.username);
+        appuser = await _userManager.FindByNameAsync(model.Username);
       }
       if (appuser == null)
       {
         return NotFound();
       }
-      var valid = await _userManager.CheckPasswordAsync(appuser, model.password);
+      var valid = await _userManager.CheckPasswordAsync(appuser, model.Password);
       if (!valid)
       {
         return BadRequest(IDPErrors.InvalidCredential);
       }
-      return await _hydra.AcceptLogin(new AcceptLoginRequest(appuser.Id), model.login_challenge);
+      return await _hydra.AcceptLogin(new AcceptLoginRequest(appuser.Id), model.LoginChallenge);
     }
 
 
@@ -92,11 +87,10 @@ namespace dmc_auth.Controllers
     public async Task<ActionResult<AcceptConsentResponse>> Consent(string consent_challenge)
     {
       var consent = await _hydra.GetConsentInfo(consent_challenge);
-      var user = await _userManager.FindByIdAsync(consent.subject);
+      var user = await _userManager.FindByIdAsync(consent.Subject);
       if (user == null) return BadRequest(IDPErrors.UserNotFound);
       var roles = await _userManager.GetRolesAsync(user);
-      // var roles = new[] { "user.admin", "user.get" };
-      var authURL = $"{Constant.GetAuthURL()}/oauth2/auth/requests/consent/accept?consent_challenge={consent_challenge}";
+      // var roles = new[] { "user.admin", "user.get" };      
       var requestContent = new AcceptConsentRequest(consent, roles.ToArray(), user);
       var acceptResponse = await _hydra.AcceptConsent(requestContent, consent_challenge);
       return acceptResponse;

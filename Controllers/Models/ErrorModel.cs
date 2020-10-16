@@ -4,17 +4,19 @@ namespace dmc_auth.Controllers.Models
 {
   public class ErrorResponse
   {
-    public string message { get; set; }
-    public List<string> messages { get; set; }
+    public string Message { get; set; }
+    public List<string> Messages { get; set; }
     public ErrorResponse()
     {
-      message = "unexpected-error";
+      Message = "unexpected-error";
     }
     public ErrorResponse(string message)
     {
-      this.message = message;
-      this.messages = new List<string>();
-      this.messages.Add(message);
+      Message = message;
+      Messages = new List<string>
+      {
+        message
+      };
     }
   }
 

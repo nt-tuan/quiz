@@ -56,8 +56,10 @@ namespace dmc_auth
         config.Authority = Environment.GetEnvironmentVariable(Constant.ENV_PUBLIC_AUTH_URL);
         config.Audience = Environment.GetEnvironmentVariable(Constant.ENV_CLIENT_ID);
         config.SaveToken = true;
-        var httpHandler = new HttpClientHandler();
-        httpHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true; // DEBUGGING ONLY
+        var httpHandler = new HttpClientHandler
+        {
+          ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true // DEBUGGING ONLY
+        };
         config.BackchannelHttpHandler = httpHandler;
         config.RequireHttpsMetadata = false;
         config.Events = new JwtBearerEvents
@@ -117,7 +119,7 @@ namespace dmc_auth
         var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
         var roleManager = scope.ServiceProvider.GetService<RoleManager<ApplicationRole>>();
         dbContext.Database.Migrate();
-        var seeder = new DataSeeder(dbContext, userManager, roleManager);
+        var seeder = new DataSeeder(userManager, roleManager);
         seeder.Seed();
 
       }

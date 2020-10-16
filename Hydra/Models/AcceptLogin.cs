@@ -1,26 +1,30 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace dmc_auth.Hydra.Models
 {
   public class AcceptLoginRequest
   {
-    public string acr { get; set; }
-    public string force_subject_identifier { get; set; }
-    public bool remember { get; set; }
-    public Int64 remember_for { get; set; }
-    public string subject { get; set; }
+    public string Acr { get; set; }
+    [JsonPropertyName("force_subject_identifier")]
+    public string ForceSubjectIdentifier { get; set; }
+    public bool Remember { get; set; }
+    [JsonPropertyName("remember_for")]
+    public long RememberFor { get; set; }
+    public string Subject { get; set; }
 
     public AcceptLoginRequest(string userId)
     {
-      subject = userId;
-      acr = "user-password";
-      remember = true;
-      remember_for = (Int64)Constant.GetRememberDuration();
+      Subject = userId;
+      Acr = "user-password";
+      Remember = true;
+      RememberFor = (long)Constant.GetRememberDuration();
     }
   }
 
   public class AcceptLoginResponse
   {
-    public string redirect_to { get; set; }
+    [JsonPropertyName("redirect_to")]
+    public string RedirectTo { get; set; }
   }
 }

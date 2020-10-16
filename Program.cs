@@ -17,8 +17,10 @@ namespace dmc_auth
     public static void Main(string[] args)
     {
       // Check auth server health
-      var httpClientHandler = new HttpClientHandler();
-      httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true; // DEBUGGING ONLY
+      var httpClientHandler = new HttpClientHandler
+      {
+        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true // DEBUGGING ONLY
+      };
       var url = $"{Constant.GetAuthURL()}/health/ready";
       var httpClient = new HttpClient(httpClientHandler);
       var responseMessage = httpClient.GetAsync(url).Result;

@@ -22,18 +22,13 @@ namespace CleanArchitecture.Web.Api
   [ApiController]
   [Authorize]
   public class MeController : ControllerBase
-  {
-    //private readonly ApplicationDbContext _context;
-    private readonly SignInManager<ApplicationUser> _signinManager;
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<ApplicationRole> _roleManager;
+  {        
+    private readonly UserManager<ApplicationUser> _userManager;    
     private readonly ILogger<AdminController> _logger;
 
-    public MeController(SignInManager<ApplicationUser> signinManager, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ILogger<AdminController> logger)
-    {
-      _signinManager = signinManager;
-      _userManager = userManager;
-      _roleManager = roleManager;
+    public MeController(UserManager<ApplicationUser> userManager, ILogger<AdminController> logger)
+    {      
+      _userManager = userManager;    
       _logger = logger;
     }
 
@@ -57,10 +52,10 @@ namespace CleanArchitecture.Web.Api
       var rs = await _userManager.ChangePasswordAsync(user, model.oldPassword, model.newPassword);
       if (rs.Succeeded)
         return Ok();
-      return responseIdentityResultError(rs);
+      return ResponseIdentityResultError(rs);
     }
 
-    private BadRequestObjectResult responseIdentityResultError(IdentityResult identityResult)
+    private BadRequestObjectResult ResponseIdentityResultError(IdentityResult identityResult)
     {
       var messages = identityResult.Errors.Select(u => $"{u.Code}: {u.Description}").ToList();
       var errResponse = new ErrorResponse();

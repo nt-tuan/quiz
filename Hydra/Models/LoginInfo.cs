@@ -2,8 +2,8 @@ namespace dmc_auth.Hydra.Models
 {
   public class LoginInfo
   {
-    public string subject { get; set; }
-    public bool skip { get; set; }
-    public string username { get; set; }
+    public string Subject { get; set; }
+    public bool Skip { get; set; }
+    public string Username { get; set; }
   }
 }

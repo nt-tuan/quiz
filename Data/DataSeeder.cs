@@ -11,39 +11,35 @@ using Newtonsoft.Json;
 namespace dmc_auth.Data
 {
   public class DataSeeder
-  {
-    readonly ApplicationDbContext dbContext;
+  {    
     readonly UserManager<ApplicationUser> userManager;
     readonly RoleManager<ApplicationRole> roleManager;
-    public DataSeeder(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
-    {
-      this.dbContext = dbContext;
+    public DataSeeder(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+    {      
       this.userManager = userManager;
       this.roleManager = roleManager;
     }
 
     public void Seed()
     {
-      seedRoles();
-      seedUsers();
+      SeedRoles();
+      SeedUsers();
     }
 
-    private string readFile(string filepath)
+    private string ReadFile(string filepath)
     {
       if (string.IsNullOrEmpty(filepath))
       {
         throw new Exception();
       }
-      using (var reader = new StreamReader(filepath))
-      {
-        var content = reader.ReadToEnd();
-        return content;
-      }
+      using var reader = new StreamReader(filepath);
+      var content = reader.ReadToEnd();
+      return content;
     }
 
-    private void seedRoles()
+    private void SeedRoles()
     {
-      var content = readFile(Constant.INIT_ROLES_FILE_PATH);
+      var content = ReadFile(Constant.INIT_ROLES_FILE_PATH);
       var roles = JsonConvert.DeserializeObject<List<ApplicationRole>>(content);
       foreach (var role in roles)
       {
@@ -55,9 +51,9 @@ namespace dmc_auth.Data
       }
 
     }
-    private void seedUsers()
+    private void SeedUsers()
     {
-      var content = readFile(Constant.INIT_USERS_FILE_PATH);
+      var content = ReadFile(Constant.INIT_USERS_FILE_PATH);
       var users = JsonConvert.DeserializeObject<List<CreateUserModel>>(content);
       foreach (var user in users)
       {

@@ -6,59 +6,59 @@ namespace dmc_auth.Controllers.Models
 {
   public class DepartmentResponse
   {
-    int id { get; set; }
-    public string fullname { get; set; }
-    public string shortname { get; set; }
-    public string code { get; set; }
+    public int Id { get; set; }
+    public string Fullname { get; set; }
+    public string Shortname { get; set; }
+    public string Code { get; set; }
 
     public DepartmentResponse(Department entity)
     {
-      id = entity.Id;
-      fullname = entity.FullName;
-      shortname = entity.ShortName;
-      code = entity.Code;
+      Id = entity.Id;
+      Fullname = entity.FullName;
+      Shortname = entity.ShortName;
+      Code = entity.Code;
     }
   }
   public class EmployeeResponse
   {
-    public int id { get; set; }
-    public string fullname { get; set; }
-    public string code { get; set; }
-    public DateTime? birthday { get; set; }
-    public int gender { get; set; }
-    public DepartmentResponse department { get; set; }
+    public int Id { get; set; }
+    public string Fullname { get; set; }
+    public string Code { get; set; }
+    public DateTime? Birthday { get; set; }
+    public int Gender { get; set; }
+    public DepartmentResponse Department { get; set; }
     public EmployeeResponse(Employee entity)
     {
-      id = entity.Id;
-      fullname = entity.FullName;
-      code = entity.Code;
-      birthday = entity.Birthday;
-      gender = entity.Gender;
+      Id = entity.Id;
+      Fullname = entity.FullName;
+      Code = entity.Code;
+      Birthday = entity.Birthday;
+      Gender = entity.Gender;
       if (entity.Department != null)
       {
-        department = new DepartmentResponse(entity.Department);
+        Department = new DepartmentResponse(entity.Department);
       }
     }
   }
   public class UserResponse
   {
-    public string id { get; set; }
-    public string username { get; set; }
-    public string email { get; set; }
-    public IList<string> roles { get; set; }
-    public bool lockoutEnable { get; set; }
-    public DateTimeOffset? lockoutEnd { get; set; }
-    public EmployeeResponse employee { get; set; }
+    public string Id { get; set; }
+    public string Username { get; set; }
+    public string Email { get; set; }
+    public IList<string> Roles { get; set; }
+    public bool LockoutEnable { get; set; }
+    public DateTimeOffset? LockoutEnd { get; set; }
+    public EmployeeResponse Employee { get; set; }
     public UserResponse(ApplicationUser entity, IList<string> roles)
     {
-      id = entity.Id;
-      username = entity.UserName;
-      lockoutEnable = entity.LockoutEnabled;
-      lockoutEnd = entity.LockoutEnd;
-      email = entity.Email;
+      Id = entity.Id;
+      Username = entity.UserName;
+      LockoutEnable = entity.LockoutEnabled;
+      LockoutEnd = entity.LockoutEnd;
+      Email = entity.Email;
       if (entity.Employee != null)
-        employee = new EmployeeResponse(entity.Employee);
-      this.roles = roles;
+        Employee = new EmployeeResponse(entity.Employee);
+      this.Roles = roles;
     }
   }
 }
