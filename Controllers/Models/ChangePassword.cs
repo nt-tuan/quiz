@@ -5,7 +5,7 @@ namespace dmc_auth.Controllers.Models
 {
   public class ChangePasswordModel
   {
-    public string newPassword { get; set; }
-    public string oldPassword { get; set; }
+    public string NewPassword { get; set; }
+    public string OldPassword { get; set; }
   }
 }

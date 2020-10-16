@@ -8,47 +8,44 @@ namespace dmc_auth
   public enum OrderDir { ASC = 1, DESC = -1 };
   public abstract class PagingQuery<T>
   {
-    public int offset { get; set; }
-    public int limit { get; set; }
-    public string orderBy { get; set; }
-    public OrderDir orderDir { get; set; }
-    public abstract Expression<Func<T, object>> getOrderExpression();
-    public IQueryable<T> applyOrderQuery(IQueryable<T> query)
+    public int Offset { get; set; }
+    public int Limit { get; set; }
+    public string OrderBy { get; set; }
+    public OrderDir OrderDir { get; set; }
+    public abstract Expression<Func<T, object>> GetOrderExpression();
+    public IQueryable<T> ApplyOrderQuery(IQueryable<T> query)
     {
-      if (orderDir == OrderDir.ASC)
+      if (OrderDir == OrderDir.ASC)
       {
-        return query.OrderBy(getOrderExpression());
+        return query.OrderBy(GetOrderExpression());
       }
-      return query.OrderByDescending(getOrderExpression());
+      return query.OrderByDescending(GetOrderExpression());
     }
 
-    public IQueryable<T> applyPagingQuery(IQueryable<T> query)
+    public IQueryable<T> ApplyPagingQuery(IQueryable<T> query)
     {
-      return query.Skip(offset).Take(limit);
+      return query.Skip(Offset).Take(Limit);
     }
 
     public IQueryable<T> BuildQuery(IQueryable<T> query)
     {
-      query = applyPagingQuery(query);
-      query = applyOrderQuery(query);
+      query = ApplyPagingQuery(query);
+      query = ApplyOrderQuery(query);
       return query;
     }
   }
 
   public class UserPagingQuery : PagingQuery<ApplicationUser>
   {
-    public override Expression<Func<ApplicationUser, object>> getOrderExpression()
+    public override Expression<Func<ApplicationUser, object>> GetOrderExpression()
     {
-      var lower = orderBy.ToLower();
-      switch (lower)
+      var lower = OrderBy.ToLower();
+      return lower switch
       {
-        case "username":
-          return user => user.NormalizedUserName;
-        case "email":
-          return user => user.NormalizedEmail;
-        default:
-          return user => user.Id;
-      }
+        "username" => user => user.NormalizedUserName,
+        "email" => user => user.NormalizedEmail,
+        _ => user => user.Id,
+      };
     }
   }
 }

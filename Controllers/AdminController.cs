@@ -23,15 +23,13 @@ namespace CleanArchitecture.Web.Api
   [Authorize]
   public class AdminController : ControllerBase
   {
-    //private readonly ApplicationDbContext _context;
-    private readonly SignInManager<ApplicationUser> _signinManager;
+    //private readonly ApplicationDbContext _context;    
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly ILogger<AdminController> _logger;
 
-    public AdminController(SignInManager<ApplicationUser> signinManager, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ILogger<AdminController> logger)
-    {
-      _signinManager = signinManager;
+    public AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ILogger<AdminController> logger)
+    {      
       _userManager = userManager;
       _roleManager = roleManager;
       _logger = logger;
@@ -69,11 +67,13 @@ namespace CleanArchitecture.Web.Api
     [Route("user")]
     public async Task<ActionResult<UserResponse>> CreateUser(CreateUserModel model)
     {
-      var user = new ApplicationUser();
-      user.UserName = model.Username;
-      user.Email = model.Email;
-      user.LockoutEnd = model.LockoutEnd;
-      user.LockoutEnabled = model.LockoutEnable ?? false;
+      var user = new ApplicationUser
+      {
+        UserName = model.Username,
+        Email = model.Email,
+        LockoutEnd = model.LockoutEnd,
+        LockoutEnabled = model.LockoutEnable ?? false
+      };
       var result = await _userManager.CreateAsync(user, model.Password);
       if (result.Succeeded)
       {
@@ -83,9 +83,9 @@ namespace CleanArchitecture.Web.Api
           var response = new UserResponse(user, model.Roles);
           return Ok(response);
         }
-        return responseIdentityResultError(result);
+        return ResponseIdentityResultError(result);
       }
-      return responseIdentityResultError(result);
+      return ResponseIdentityResultError(result);
     }
 
     [HttpGet]
@@ -107,12 +107,12 @@ namespace CleanArchitecture.Web.Api
       var identityResult = await _userManager.SetLockoutEnabledAsync(user, true);
       if (!identityResult.Succeeded)
       {
-        return responseIdentityResultError(identityResult);
+        return ResponseIdentityResultError(identityResult);
       }
       identityResult = await _userManager.SetLockoutEndDateAsync(user, new DateTime(2100, 1, 1));
       if (!identityResult.Succeeded)
       {
-        return responseIdentityResultError(identityResult);
+        return ResponseIdentityResultError(identityResult);
       }
       return Ok();
     }
@@ -125,7 +125,7 @@ namespace CleanArchitecture.Web.Api
       var identityResult = await _userManager.SetLockoutEndDateAsync(user, DateTime.UtcNow);
       if (!identityResult.Succeeded)
       {
-        return responseIdentityResultError(identityResult);
+        return ResponseIdentityResultError(identityResult);
       }
       return Ok();
     }
@@ -142,7 +142,7 @@ namespace CleanArchitecture.Web.Api
       var rs = await _userManager.ChangePasswordAsync(user, model.oldPassword, model.newPassword);
       if (rs.Succeeded)
         return Ok();
-      return responseIdentityResultError(rs);
+      return ResponseIdentityResultError(rs);
     }
 
     [HttpPost]
@@ -161,7 +161,7 @@ namespace CleanArchitecture.Web.Api
 
       if (result.Succeeded)
         return Ok();
-      return responseIdentityResultError(result);
+      return ResponseIdentityResultError(result);
     }
 
     [HttpGet]
@@ -193,7 +193,7 @@ namespace CleanArchitecture.Web.Api
       var identityResult = await _userManager.AddToRoleAsync(user, role);
       if (identityResult.Succeeded)
         return Ok();
-      return responseIdentityResultError(identityResult);
+      return ResponseIdentityResultError(identityResult);
     }
 
     [HttpDelete]
@@ -204,10 +204,10 @@ namespace CleanArchitecture.Web.Api
       var identityResult = await _userManager.RemoveFromRoleAsync(user, role);
       if (identityResult.Succeeded)
         return Ok();
-      return responseIdentityResultError(identityResult);
+      return ResponseIdentityResultError(identityResult);
     }
 
-    private BadRequestObjectResult responseIdentityResultError(IdentityResult identityResult)
+    private BadRequestObjectResult ResponseIdentityResultError(IdentityResult identityResult)
     {
       var messages = identityResult.Errors.Select(u => $"{u.Code}: {u.Description}").ToList();
       var errResponse = new ErrorResponse();

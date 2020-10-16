@@ -5,12 +5,12 @@ namespace dmc_auth.Controllers.Models
 {
     public class RoleResponse
     {
-        public string name { get; set; }
-        public string description { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public RoleResponse(ApplicationRole entity)
         {
-            name = entity.Name;
-            description = entity.Description;
+            Name = entity.Name;
+            Description = entity.Description;
         }
     }
 }
