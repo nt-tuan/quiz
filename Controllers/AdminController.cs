@@ -139,7 +139,7 @@ namespace CleanArchitecture.Web.Api
       var user = await _userManager.FindByNameAsync(User.Identity.Name);
       if (user == null)
         return NotFound();
-      var rs = await _userManager.ChangePasswordAsync(user, model.oldPassword, model.newPassword);
+      var rs = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
       if (rs.Succeeded)
         return Ok();
       return ResponseIdentityResultError(rs);
@@ -212,8 +212,8 @@ namespace CleanArchitecture.Web.Api
       var messages = identityResult.Errors.Select(u => $"{u.Code}: {u.Description}").ToList();
       var errResponse = new ErrorResponse();
       if (messages.Count > 0)
-        errResponse.message = messages[0];
-      errResponse.messages = messages;
+        errResponse.Message = messages[0];
+      errResponse.Messages = messages;
       return BadRequest(errResponse);
     }
 

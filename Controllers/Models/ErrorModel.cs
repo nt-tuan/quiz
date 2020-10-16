@@ -9,6 +9,8 @@ namespace dmc_auth.Controllers.Models
     public ErrorResponse()
     {
       Message = "unexpected-error";
+      Messages = new List<string>();
+
     }
     public ErrorResponse(string message)
     {
