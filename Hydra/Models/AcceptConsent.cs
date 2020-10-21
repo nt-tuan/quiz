@@ -5,7 +5,9 @@ namespace dmc_auth.Hydra.Models
 {
   public class ConsentAcceptAccessTokenBody
   {
+    [JsonPropertyName("roles")]
     public string[] Roles { get; set; }
+    [JsonPropertyName("name")]
     public string Name { get; set; }
     public ConsentAcceptAccessTokenBody(string[] roles, ApplicationUser user)
     {
@@ -15,6 +17,7 @@ namespace dmc_auth.Hydra.Models
   }
   public class ConsentAcceptIDTokenBody
   {
+    [JsonPropertyName("roles")]
     public string[] Roles { get; set; }
     [JsonPropertyName("unique_name")]
     public string UniqueName { get; set; }

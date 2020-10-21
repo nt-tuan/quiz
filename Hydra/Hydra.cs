@@ -1,14 +1,10 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using dmc_auth.Controllers.Models;
-using dmc_auth.Entities;
 using dmc_auth.Hydra.Models;
-using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace dmc_auth.Hydra
 {
@@ -27,13 +23,13 @@ namespace dmc_auth.Hydra
     {
       var authURL = $"{Constant.GetAuthURL()}/oauth2/auth/requests/consent/accept?consent_challenge={challenge}";
       var client = GetClient();
-      var requestBodyString = JsonConvert.SerializeObject(requestContent);
+      var requestBodyString = JsonSerializer.Serialize(requestContent);
       var stringRequestContent = new StringContent(requestBodyString, Encoding.UTF8, "application/json");
       var response = await client.PutAsync(authURL, stringRequestContent);
       var stringContent = await response.Content.ReadAsStringAsync();
       if (response.StatusCode == HttpStatusCode.OK)
       {
-        var acceptResponse = JsonConvert.DeserializeObject<AcceptConsentResponse>(stringContent);
+        var acceptResponse = JsonSerializer.Deserialize<AcceptConsentResponse>(stringContent);
         return acceptResponse;
       }
       throw new Exception(stringContent);
@@ -43,12 +39,12 @@ namespace dmc_auth.Hydra
     {
       var client = GetClient();
       var acceptURL = $"{Constant.GetAuthURL()}/oauth2/auth/requests/login/accept?login_challenge={challenge}";
-      var stringRequestContent = new StringContent(JsonConvert.SerializeObject(requestContent), Encoding.UTF8, "application/json");
+      var stringRequestContent = new StringContent(JsonSerializer.Serialize(requestContent), Encoding.UTF8, "application/json");
       var response = await client.PutAsync(acceptURL, stringRequestContent);
       var stringContent = await response.Content.ReadAsStringAsync();
       if (response.StatusCode == HttpStatusCode.OK)
       {
-        var acceptResponse = JsonConvert.DeserializeObject<AcceptLoginResponse>(stringContent);
+        var acceptResponse = JsonSerializer.Deserialize<AcceptLoginResponse>(stringContent);
         return acceptResponse;
       }
       throw new Exception(stringContent);
@@ -63,7 +59,7 @@ namespace dmc_auth.Hydra
       var stringContent = await response.Content.ReadAsStringAsync();
       if (response.StatusCode == HttpStatusCode.OK)
       {
-        var acceptResponse = JsonConvert.DeserializeObject<AcceptLogoutResponse>(stringContent);
+        var acceptResponse = JsonSerializer.Deserialize<AcceptLogoutResponse>(stringContent);
         return acceptResponse;
       }
       throw new Exception(stringContent);
@@ -77,7 +73,7 @@ namespace dmc_auth.Hydra
       var stringContent = await responseMessage.Content.ReadAsStringAsync();
       if (responseMessage.StatusCode == HttpStatusCode.OK)
       {
-        var consentInfo = JsonConvert.DeserializeObject<ConsentInfo>(stringContent);
+        var consentInfo = JsonSerializer.Deserialize<ConsentInfo>(stringContent);
         return consentInfo;
       }
       throw new Exception(stringContent);
@@ -93,7 +89,7 @@ namespace dmc_auth.Hydra
       {
         throw new Exception(responseText);
       }
-      var loginInfo = JsonConvert.DeserializeObject<LoginInfo>(responseText);
+      var loginInfo = JsonSerializer.Deserialize<LoginInfo>(responseText);
       return loginInfo;
     }
 

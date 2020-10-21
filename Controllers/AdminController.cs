@@ -29,7 +29,7 @@ namespace CleanArchitecture.Web.Api
     private readonly ILogger<AdminController> _logger;
 
     public AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ILogger<AdminController> logger)
-    {      
+    {
       _userManager = userManager;
       _roleManager = roleManager;
       _logger = logger;
@@ -99,6 +99,24 @@ namespace CleanArchitecture.Web.Api
       return new UserResponse(user, roles);
     }
 
+    [HttpPut]
+    [Route("user/{id}")]
+    public async Task<ActionResult<UserResponse>> Update(string id, EditUserModel model)
+    {
+      var user = await _userManager.FindByIdAsync(id);
+      if (user == null) return NotFound();
+      user.Email = model.Email;
+      user.LockoutEnabled = model.LockoutEnable ?? false;
+      user.LockoutEnd = model.LockoutEnd;
+      user.Image = model.Image;
+      user.PhoneNumber = model.Phone;
+      user.Fullname = model.Fullname;
+      user.Nickname = model.Nickname;
+      var result = await _userManager.UpdateAsync(user);
+      if (result.Succeeded) return new UserResponse(user, new List<string>());
+      return ResponseIdentityResultError(result);
+    }
+
     [HttpPost]
     [Route("user/{id}/lock")]
     public async Task<IActionResult> Lock(string id)
@@ -160,7 +178,7 @@ namespace CleanArchitecture.Web.Api
       var result = await _userManager.ResetPasswordAsync(user, token, password);
 
       if (result.Succeeded)
-        return Ok();
+        return Ok(new { password });
       return ResponseIdentityResultError(result);
     }
 
