@@ -8,6 +8,7 @@ namespace dmc_auth.Hydra.Models
     public string[] RequestedAccessTokenAudience { get; set; }
     [JsonPropertyName("requested_scope")]
     public string[] RequestedScope { get; set; }
+    [JsonPropertyName("subject")]
     public string Subject { get; set; }
 
   }

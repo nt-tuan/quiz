@@ -45,6 +45,10 @@ namespace dmc_auth.Controllers.Models
     public string Id { get; set; }
     public string Username { get; set; }
     public string Email { get; set; }
+    public string Fullname { get; set; }
+    public string Phone { get; set; }
+    public string Nickname { get; set; }
+    public string Image { get; set; }
     public IList<string> Roles { get; set; }
     public bool LockoutEnable { get; set; }
     public DateTimeOffset? LockoutEnd { get; set; }
@@ -56,9 +60,13 @@ namespace dmc_auth.Controllers.Models
       LockoutEnable = entity.LockoutEnabled;
       LockoutEnd = entity.LockoutEnd;
       Email = entity.Email;
+      Fullname = entity.Fullname;
+      Nickname = entity.Nickname;
+      Image = entity.Image;
+      Phone = entity.PhoneNumber;
       if (entity.Employee != null)
         Employee = new EmployeeResponse(entity.Employee);
-      this.Roles = roles;
+      Roles = roles;
     }
   }
 }
