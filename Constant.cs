@@ -21,6 +21,7 @@ namespace dmc_auth
         {
             get { return Environment.GetEnvironmentVariable("RULES_FILEPATH"); }
         }
+        public static string USER_HEADER_KEY = "X-User";
 
         public static string GetUserInfoURL()
         {
