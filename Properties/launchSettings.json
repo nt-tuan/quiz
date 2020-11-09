@@ -29,7 +29,8 @@
         "CLIENT_SECRET": "AKNK2NNKH01N1OLNL1N6L109SBUX0C0BWJEBM0",
         "REMEMBER_DURATION": "2592000",
         "INIT_ROLES_FILEPATH": "./Content/roles.json",
-        "INIT_USERS_FILEPATH": "./Content/users.json"
+        "INIT_USERS_FILEPATH": "./Content/users.json",
+        "RULES_FILEPATH": "./Content/rules.json"
       }
     }
   }

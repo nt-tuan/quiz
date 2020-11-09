@@ -21,6 +21,7 @@ services:
       REMEMBER_DURATION: 2592000
       INIT_ROLES_FILEPATH: /data/roles.json
       INIT_USERS_FILEPATH: /data/users.json
+      RULES_FILEPATH: /data/rules.json
   db:
     image: postgres:11.2-alpine
     ports:

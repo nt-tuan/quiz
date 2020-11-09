@@ -1,0 +1,10 @@
+[
+    {
+        "path":"[^\/]*/allowUserRead",
+        "role": "user.read"
+    },
+    {
+        "path":"[^\/]*/allowUserWrite",
+        "role": "user.write"
+    }
+]
