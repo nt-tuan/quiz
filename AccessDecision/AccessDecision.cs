@@ -22,16 +22,14 @@ namespace dmc_auth.AccessDecision
             var content = reader.ReadToEnd();
             Rules = JsonSerializer.Deserialize<List<Rule>>(content);
         }
-        public bool CanAccess(string path, string[] roles)
+        public bool CanAccess(string path, string[] roles, string method)
         {
             foreach (var rule in Rules)
             {
                 if (Regex.Match(path, rule.Path).Success)
                 {
-                    if (roles.Contains(rule.Role))
-                    {
-                        return true;
-                    }
+                    if (rule.Methods != null && rule.Methods.Length > 0 && !rule.Methods.Contains(method)) continue;
+                    return roles.Contains(rule.Role);
                 }
             }
             return false;

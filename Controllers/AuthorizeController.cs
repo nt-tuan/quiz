@@ -13,16 +13,20 @@ namespace CleanArchitecture.Web.Api
     public class AuthorizeController : ControllerBase
     {
         private readonly AccessDecision _decision;
-        public AuthorizeController(AccessDecision decision)
+        private readonly ILogger<AuthorizeController> _logger;
+        public AuthorizeController(AccessDecision decision, ILogger<AuthorizeController> logger)
         {
             _decision = decision;
+            _logger = logger;
         }
         [HttpGet]
         public ActionResult Get()
         {
             var roles = Request.Headers["X-Roles"];
             var path = Request.Headers["X-Request-Uri"];
-            if (_decision.CanAccess(path, roles.ToString().Split(",")))
+            var method = Request.Headers["X-Request-Method"];
+            _logger.LogInformation("Path: {0} \nRoles: {1} \nMethod: {2}", path, roles, method);
+            if (_decision.CanAccess(path, roles.ToString().Split(","), method))
             {
                 return Ok();
             }

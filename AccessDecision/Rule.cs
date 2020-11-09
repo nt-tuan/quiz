@@ -9,5 +9,7 @@ namespace dmc_auth.AccessDecision
         public string Path { get; set; }
         [JsonPropertyName("role")]
         public string Role { get; set; }
+        [JsonPropertyName("methods")]
+        public string Methods { get; set; }
     }
 }
