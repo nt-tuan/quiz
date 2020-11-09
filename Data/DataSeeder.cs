@@ -10,64 +10,64 @@ using Newtonsoft.Json;
 
 namespace dmc_auth.Data
 {
-  public class DataSeeder
-  {    
-    readonly UserManager<ApplicationUser> userManager;
-    readonly RoleManager<ApplicationRole> roleManager;
-    public DataSeeder(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
-    {      
-      this.userManager = userManager;
-      this.roleManager = roleManager;
-    }
-
-    public void Seed()
+    public class DataSeeder
     {
-      SeedRoles();
-      SeedUsers();
-    }
-
-    private string ReadFile(string filepath)
-    {
-      if (string.IsNullOrEmpty(filepath))
-      {
-        throw new Exception();
-      }
-      using var reader = new StreamReader(filepath);
-      var content = reader.ReadToEnd();
-      return content;
-    }
-
-    private void SeedRoles()
-    {
-      var content = ReadFile(Constant.INIT_ROLES_FILE_PATH);
-      var roles = JsonConvert.DeserializeObject<List<ApplicationRole>>(content);
-      foreach (var role in roles)
-      {
-        var entity = roleManager.FindByNameAsync(role.Name).Result;
-        if (entity == null)
+        readonly UserManager<ApplicationUser> userManager;
+        readonly RoleManager<ApplicationRole> roleManager;
+        public DataSeeder(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {
-          roleManager.CreateAsync(role).Wait();
+            this.userManager = userManager;
+            this.roleManager = roleManager;
         }
-      }
 
-    }
-    private void SeedUsers()
-    {
-      var content = ReadFile(Constant.INIT_USERS_FILE_PATH);
-      var users = JsonConvert.DeserializeObject<List<CreateUserModel>>(content);
-      foreach (var user in users)
-      {
-        var entity = userManager.FindByNameAsync(user.Username).Result;
-        if (entity == null)
+        public void Seed()
         {
-          var result = userManager.CreateAsync(new ApplicationUser { UserName = user.Username, Email = user.Email }, user.Password).Result;
-          if (result.Succeeded)
-          {
-            entity = userManager.FindByNameAsync(user.Username).Result;
-          }
+            SeedRoles();
+            SeedUsers();
         }
-        userManager.AddToRolesAsync(entity, user.Roles).Wait();
-      }
+
+        private string ReadFile(string filepath)
+        {
+            if (string.IsNullOrEmpty(filepath))
+            {
+                throw new Exception();
+            }
+            using var reader = new StreamReader(filepath);
+            var content = reader.ReadToEnd();
+            return content;
+        }
+
+        private void SeedRoles()
+        {
+            var content = ReadFile(Constant.INIT_ROLES_FILEPATH);
+            var roles = JsonConvert.DeserializeObject<List<ApplicationRole>>(content);
+            foreach (var role in roles)
+            {
+                var entity = roleManager.FindByNameAsync(role.Name).Result;
+                if (entity == null)
+                {
+                    roleManager.CreateAsync(role).Wait();
+                }
+            }
+
+        }
+        private void SeedUsers()
+        {
+            var content = ReadFile(Constant.INIT_USERS_FILEPATH);
+            var users = JsonConvert.DeserializeObject<List<CreateUserModel>>(content);
+            foreach (var user in users)
+            {
+                var entity = userManager.FindByNameAsync(user.Username).Result;
+                if (entity == null)
+                {
+                    var result = userManager.CreateAsync(new ApplicationUser { UserName = user.Username, Email = user.Email }, user.Password).Result;
+                    if (result.Succeeded)
+                    {
+                        entity = userManager.FindByNameAsync(user.Username).Result;
+                    }
+                }
+                userManager.AddToRolesAsync(entity, user.Roles).Wait();
+            }
+        }
     }
-  }
 }
