@@ -8,6 +8,7 @@ using dmc_auth.Hydra;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace CleanArchitecture.Web.Api
 {
@@ -40,18 +41,25 @@ namespace CleanArchitecture.Web.Api
       if (!string.IsNullOrEmpty(bearertoken)) return Unauthorized();
       if (bearertoken.Length <= "Bearer".Length) return Unauthorized();
       var accessToken = bearertoken["Bearer ".Length..];
-
-      var result = await _hydra.InstropectToken(accessToken, null);
-      if (!result.Active)
-        return Unauthorized();
-      Response.Headers.Add("X-Subject", result.Sub);
-      Response.Headers.Add("X-User", result.Ext.Name);
-      Response.Headers.Add("X-Roles", result.Ext.Roles);
-      foreach (var pair in Response.Headers)
+      try
       {
-        _logger.LogInformation("RESPONSE HEADER ---- {0}:{1} ", pair.Key, pair.Value);
+        var result = await _hydra.InstropectToken(accessToken, null);
+        if (!result.Active)
+          return Unauthorized();
+        Response.Headers.Add("X-Subject", result.Sub);
+        Response.Headers.Add("X-User", result.Ext.Name);
+        Response.Headers.Add("X-Roles", result.Ext.Roles);
+        _logger.LogInformation("REPSONSE HEADERS");
+        foreach (var pair in Response.Headers)
+        {
+          _logger.LogInformation("RESPONSE HEADER ---- {0}:{1} ", pair.Key, pair.Value);
+        }
+        return Ok();
       }
-      return Ok();
+      catch (Exception e)
+      {
+        return Unauthorized(e.Message);
+      }
     }
   }
 }
