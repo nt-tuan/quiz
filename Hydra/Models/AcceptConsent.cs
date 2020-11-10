@@ -9,6 +9,7 @@ namespace dmc_auth.Hydra.Models
     public string[] Roles { get; set; }
     [JsonPropertyName("name")]
     public string Name { get; set; }
+    public ConsentAcceptAccessTokenBody() { }
     public ConsentAcceptAccessTokenBody(string[] roles, ApplicationUser user)
     {
       Roles = roles;
@@ -21,6 +22,7 @@ namespace dmc_auth.Hydra.Models
     public string[] Roles { get; set; }
     [JsonPropertyName("unique_name")]
     public string UniqueName { get; set; }
+    public ConsentAcceptIDTokenBody() { }
     public ConsentAcceptIDTokenBody(string[] roles, ApplicationUser user) : base()
     {
       Roles = roles;

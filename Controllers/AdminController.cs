@@ -1,47 +1,28 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using dmc_auth;
 using dmc_auth.Controllers.Models;
-using dmc_auth.Data;
 using dmc_auth.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace CleanArchitecture.Web.Api
 {
   [Route("api/[controller]")]
   [ApiController]
-  [Authorize]
   public class AdminController : ControllerBase
   {
     //private readonly ApplicationDbContext _context;    
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
-    private readonly ILogger<AdminController> _logger;
 
-    public AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, ILogger<AdminController> logger)
+    public AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
     {
       _userManager = userManager;
       _roleManager = roleManager;
-      _logger = logger;
-    }
-
-    [HttpGet]
-    [Route("authenticated")]
-    public ActionResult Authenticated()
-    {
-      var roles = string.Join(",", User.FindAll(ClaimTypes.Role).Select(u => u.Value));
-      var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
-      return Ok($"USER: {user}, roles: {roles} ");
     }
 
     [HttpGet]
@@ -146,21 +127,6 @@ namespace CleanArchitecture.Web.Api
         return ResponseIdentityResultError(identityResult);
       }
       return Ok();
-    }
-
-    [HttpPost]
-    [Route("changepassword")]
-    public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
-    {
-      _logger.LogInformation(JsonConvert.SerializeObject(
-        ((ClaimsIdentity)User.Identity).Claims.Select(claim => new { claim.Type, claim.Value, claim.ValueType })));
-      var user = await _userManager.FindByNameAsync(User.Identity.Name);
-      if (user == null)
-        return NotFound();
-      var rs = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-      if (rs.Succeeded)
-        return Ok();
-      return ResponseIdentityResultError(rs);
     }
 
     [HttpPost]

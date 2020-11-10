@@ -1,7 +1,8 @@
 [
     {
-        "path":"[^\/]*/allowUserRead",
-        "role": "user.read"
+        "path":"id-api.my-shell.com/api/admin/.*",
+        "role": "user.read",
+        "methods": ["GET"]
     },
     {
         "path":"[^\/]*/allowUserWrite",
