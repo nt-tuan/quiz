@@ -1,3 +1,6 @@
+using System.Collections.Specialized;
+using System.Linq;
+using System.Web;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -5,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using dmc_auth.Hydra.Models;
 using System.Text.Json;
+using System.Collections.Generic;
 
 namespace dmc_auth.Hydra
 {
@@ -15,6 +19,7 @@ namespace dmc_auth.Hydra
     Task<AcceptLoginResponse> AcceptLogin(AcceptLoginRequest request, string challenge);
     Task<AcceptConsentResponse> AcceptConsent(AcceptConsentRequest requestContent, string challenge);
     Task<AcceptLogoutResponse> AcceptLogout(string challenge);
+    Task<TokenInstropectResponse> InstropectToken(string token, string scope);
   }
 
   public class Hydra : IHydra
@@ -93,6 +98,26 @@ namespace dmc_auth.Hydra
       return loginInfo;
     }
 
+    public async Task<TokenInstropectResponse> InstropectToken(string token, string scope)
+    {
+      var url = $"{Constant.GetAuthURL()}/oauth2/introspect";
+      var httpClient = GetClient();
+      httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+      httpClient.DefaultRequestHeaders.Add("Content-Type", "application/x-www-form-urlencoded");
+      var formVariables = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("token", token),
+                new KeyValuePair<string, string>("scope", scope)
+            };
+      var formContent = new FormUrlEncodedContent(formVariables);
+      var response = await httpClient.PostAsync(url, formContent);
+      var responseText = await response.Content.ReadAsStringAsync();
+      if (response.StatusCode == HttpStatusCode.OK)
+      {
+        return JsonSerializer.Deserialize<TokenInstropectResponse>(responseText);
+      }
+      throw new Exception(responseText);
+    }
     HttpClient GetClient()
     {
       var httpClientHandler = new HttpClientHandler
