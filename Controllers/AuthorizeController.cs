@@ -32,7 +32,7 @@ namespace CleanArchitecture.Web.Api
       var method = Request.Headers["X-Request-Method"];
       foreach (var pair in Request.Headers)
       {
-        _logger.LogInformation("HEADER ---- {0}:{1} ", pair.Key, pair.Value);
+        _logger.LogInformation("REQUEST HEADER ---- {0}:{1} ", pair.Key, pair.Value);
       }
       _logger.LogInformation("Auth Headers: ", Request.Headers);
       var rule = _decision.GetFirstMatchedRule(path, method);
@@ -49,7 +49,7 @@ namespace CleanArchitecture.Web.Api
       Response.Headers.Add("X-Roles", result.Ext.Roles);
       foreach (var pair in Response.Headers)
       {
-        _logger.LogInformation("HEADER ---- {0}:{1} ", pair.Key, pair.Value);
+        _logger.LogInformation("RESPONSE HEADER ---- {0}:{1} ", pair.Key, pair.Value);
       }
       return Ok();
     }
