@@ -1,14 +1,8 @@
 using System.Text.RegularExpressions;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Text.Json;
 using System;
 using System.IO;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using dmc_auth.Hydra;
-using dmc_auth.Hydra.Models;
 
 namespace dmc_auth.AccessDecision
 {

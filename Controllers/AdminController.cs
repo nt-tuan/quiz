@@ -1,22 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using dmc_auth;
 using dmc_auth.Controllers.Models;
-using dmc_auth.Data;
 using dmc_auth.Entities;
-using dmc_auth.Hydra;
-using dmc_auth.Hydra.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace CleanArchitecture.Web.Api
 {

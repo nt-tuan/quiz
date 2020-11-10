@@ -1,6 +1,3 @@
-using System.Collections.Specialized;
-using System.Linq;
-using System.Web;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -9,6 +6,7 @@ using System.Threading.Tasks;
 using dmc_auth.Hydra.Models;
 using System.Text.Json;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 
 namespace dmc_auth.Hydra
 {
@@ -102,15 +100,18 @@ namespace dmc_auth.Hydra
     {
       var url = $"{Constant.GetAuthURL()}/oauth2/introspect";
       var httpClient = GetClient();
-      httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-      httpClient.DefaultRequestHeaders.Add("Content-Type", "application/x-www-form-urlencoded");
+      httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
       var formVariables = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("token", token),
                 new KeyValuePair<string, string>("scope", scope)
             };
       var formContent = new FormUrlEncodedContent(formVariables);
-      var response = await httpClient.PostAsync(url, formContent);
+      var request = new HttpRequestMessage(HttpMethod.Post, url)
+      {
+        Content = formContent
+      };
+      var response = await httpClient.SendAsync(request);
       var responseText = await response.Content.ReadAsStringAsync();
       if (response.StatusCode == HttpStatusCode.OK)
       {

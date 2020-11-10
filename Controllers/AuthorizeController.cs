@@ -1,14 +1,11 @@
-using System.Runtime.Serialization.Json;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+
 using System.Threading.Tasks;
 using dmc_auth.AccessDecision;
 using dmc_auth.Hydra;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Text.Json;
 
 namespace CleanArchitecture.Web.Api
 {
@@ -31,14 +28,9 @@ namespace CleanArchitecture.Web.Api
       var bearertoken = Request.Headers["Authorization"].ToString();
       var path = Request.Headers["X-Request-Uri"];
       var method = Request.Headers["X-Request-Method"];
-      foreach (var pair in Request.Headers)
-      {
-        _logger.LogInformation("REQUEST HEADER ---- {0}:{1} ", pair.Key, pair.Value);
-      }
-      _logger.LogInformation("Auth Headers: ", Request.Headers);
       var rule = _decision.GetFirstMatchedRule(path, method);
       if (rule == null) return Ok();
-      if (!string.IsNullOrEmpty(bearertoken)) return Unauthorized();
+      if (string.IsNullOrEmpty(bearertoken)) return Unauthorized();
       if (bearertoken.Length <= "Bearer".Length) return Unauthorized();
       var accessToken = bearertoken["Bearer ".Length..];
       try
@@ -48,16 +40,14 @@ namespace CleanArchitecture.Web.Api
           return Unauthorized();
         Response.Headers.Add("X-Subject", result.Sub);
         Response.Headers.Add("X-User", result.Ext.Name);
-        Response.Headers.Add("X-Roles", result.Ext.Roles);
-        _logger.LogInformation("REPSONSE HEADERS");
-        foreach (var pair in Response.Headers)
-        {
-          _logger.LogInformation("RESPONSE HEADER ---- {0}:{1} ", pair.Key, pair.Value);
-        }
+        Response.Headers.Add("X-Roles", string.Join(",", result.Ext.Roles));
+        Response.Headers.Add("X-Scope", result.Scope);
         return Ok();
       }
       catch (Exception e)
       {
+        _logger.LogInformation(e.Message);
+        _logger.LogInformation(e.StackTrace);
         return Unauthorized(e.Message);
       }
     }
