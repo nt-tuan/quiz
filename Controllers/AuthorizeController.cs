@@ -29,6 +29,7 @@ namespace CleanArchitecture.Web.Api
       var bearertoken = Request.Headers["Authorization"].ToString();
       var path = Request.Headers["X-Request-Uri"];
       var method = Request.Headers["X-Request-Method"];
+      _logger.LogInformation("Path: {0}\nMethod: {1}", path, method);
       var rule = _decision.GetFirstMatchedRule(path, method);
       if (rule == null) return Ok();
       var accessToken = bearertoken["Bearer ".Length..];
