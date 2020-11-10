@@ -6,7 +6,6 @@ using dmc_auth.Controllers.Models;
 using dmc_auth.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace CleanArchitecture.Web.Api
 {
@@ -15,12 +14,10 @@ namespace CleanArchitecture.Web.Api
   public class MeController : ControllerBase
   {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly ILogger<AdminController> _logger;
 
-    public MeController(UserManager<ApplicationUser> userManager, ILogger<AdminController> logger)
+    public MeController(UserManager<ApplicationUser> userManager)
     {
       _userManager = userManager;
-      _logger = logger;
     }
 
     [HttpGet]
@@ -46,11 +43,7 @@ namespace CleanArchitecture.Web.Api
 
     private async Task<ApplicationUser> GetUser()
     {
-      foreach (var p in Request.Headers)
-      {
-        _logger.LogInformation("HEADERS -- {0}:{1}", p.Key, p.Value);
-      }
-      return await _userManager.FindByNameAsync(Request.Headers[Constant.USER_HEADER_KEY]);
+      return await _userManager.FindByIdAsync(Request.Headers[Constant.USER_HEADER_KEY]);
     }
 
     private BadRequestObjectResult ResponseIdentityResultError(IdentityResult identityResult)

@@ -24,7 +24,7 @@ namespace dmc_auth.AccessDecision
     {
       foreach (var rule in Rules)
       {
-        if (rule.Methods == null || rule.Methods.Count == 0 || !rule.Methods.Contains(method)) continue;
+        if (rule.Methods == null && rule.Methods.Count == 0 && !rule.Methods.Contains(method)) continue;
         if (Regex.Match(path, rule.Path).Success)
         {
           return rule;
