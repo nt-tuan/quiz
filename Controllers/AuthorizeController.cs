@@ -47,7 +47,10 @@ namespace CleanArchitecture.Web.Api
       Response.Headers.Add("X-Subject", result.Sub);
       Response.Headers.Add("X-User", result.Ext.Name);
       Response.Headers.Add("X-Roles", result.Ext.Roles);
-      _logger.LogInformation("Headers: {0}", Response.Headers);
+      foreach (var pair in Response.Headers)
+      {
+        _logger.LogInformation("HEADER ---- {0}:{1} ", pair.Key, pair.Value);
+      }
       return Ok();
     }
   }
