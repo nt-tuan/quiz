@@ -1,3 +1,4 @@
+using System.Runtime.Serialization.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -29,10 +30,17 @@ namespace CleanArchitecture.Web.Api
       var bearertoken = Request.Headers["Authorization"].ToString();
       var path = Request.Headers["X-Request-Uri"];
       var method = Request.Headers["X-Request-Method"];
-      _logger.LogInformation("Path: {0}\nMethod: {1}", path, method);
+      foreach (var pair in Request.Headers)
+      {
+        _logger.LogInformation("HEADER ---- {0}:{1} ", pair.Key, pair.Value);
+      }
+      _logger.LogInformation("Auth Headers: ", Request.Headers);
       var rule = _decision.GetFirstMatchedRule(path, method);
       if (rule == null) return Ok();
+      if (!string.IsNullOrEmpty(bearertoken)) return Unauthorized();
+      if (bearertoken.Length <= "Bearer".Length) return Unauthorized();
       var accessToken = bearertoken["Bearer ".Length..];
+
       var result = await _hydra.InstropectToken(accessToken, null);
       if (!result.Active)
         return Unauthorized();
