@@ -15,10 +15,8 @@ namespace dmc_auth.AccessDecision
   public class AccessDecision
   {
     private readonly List<Rule> Rules;
-    private readonly IHydra _hydra;
-    public AccessDecision(IHydra hydra)
+    public AccessDecision()
     {
-      _hydra = hydra;
       if (string.IsNullOrEmpty(Constant.RULES_FILEPATH))
       {
         throw new Exception();
