@@ -1,11 +1,9 @@
-
 using System.Threading.Tasks;
 using dmc_auth.AccessDecision;
 using dmc_auth.Hydra;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Text.Json;
 
 namespace CleanArchitecture.Web.Api
 {
