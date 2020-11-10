@@ -1,46 +1,47 @@
 using System;
 namespace dmc_auth
 {
-    public class Constant
+  public class Constant
+  {
+    public static string CLIENT_ID
     {
-        const string ENV_AUTH_URL = "AUTH_URL";
-        const string ENV_REMEMBER_DURATION = "REMEMBER_DURATION";
-        public const string ENV_PUBLIC_AUTH_URL = "PUBLIC_AUTH_URL";
-        public const string ENV_CLIENT_ID = "CLIENT_ID";
-        public const string ENV_CLIENT_SECRET = "CLIENT_SECRET";
-        public const string ENV_AUDIENCE = "AUDIENCE";
-        public static string INIT_ROLES_FILEPATH
-        {
-            get { return Environment.GetEnvironmentVariable("INIT_ROLES_FILEPATH"); }
-        }
-        public static string INIT_USERS_FILEPATH
-        {
-            get { return Environment.GetEnvironmentVariable("INIT_USERS_FILEPATH"); }
-        }
-        public static string RULES_FILEPATH
-        {
-            get { return Environment.GetEnvironmentVariable("RULES_FILEPATH"); }
-        }
-        public static string USER_HEADER_KEY = "X-User";
-
-        public static string GetUserInfoURL()
-        {
-            return Environment.GetEnvironmentVariable(ENV_PUBLIC_AUTH_URL) + "/userinfo";
-        }
-        public static string GetAuthURL()
-        {
-            return Environment.GetEnvironmentVariable(ENV_AUTH_URL);
-        }
-        public static UInt64 GetRememberDuration()
-        {
-            UInt64 dur = 0;
-            try
-            {
-                var str = Environment.GetEnvironmentVariable(ENV_REMEMBER_DURATION);
-                dur = UInt64.Parse(str);
-            }
-            catch { }
-            return dur;
-        }
+      get
+      {
+        return Environment.GetEnvironmentVariable("CLIENT_ID");
+      }
     }
+    public static string INIT_ROLES_FILEPATH
+    {
+      get { return Environment.GetEnvironmentVariable("INIT_ROLES_FILEPATH"); }
+    }
+    public static string INIT_USERS_FILEPATH
+    {
+      get { return Environment.GetEnvironmentVariable("INIT_USERS_FILEPATH"); }
+    }
+    public static string RULES_FILEPATH
+    {
+      get { return Environment.GetEnvironmentVariable("RULES_FILEPATH"); }
+    }
+    public static string USER_HEADER_KEY = "X-Subject";
+
+    public static string GetUserInfoURL()
+    {
+      return Environment.GetEnvironmentVariable("PUBLIC_AUTH_URL") + "/userinfo";
+    }
+    public static string GetAuthURL()
+    {
+      return Environment.GetEnvironmentVariable("AUTH_URL");
+    }
+    public static UInt64 GetRememberDuration()
+    {
+      UInt64 dur = 0;
+      try
+      {
+        var str = Environment.GetEnvironmentVariable("REMEMBER_DURATION");
+        dur = UInt64.Parse(str);
+      }
+      catch { }
+      return dur;
+    }
+  }
 }

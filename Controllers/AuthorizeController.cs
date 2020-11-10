@@ -4,6 +4,7 @@ using dmc_auth.Hydra;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 
 namespace CleanArchitecture.Web.Api
 {
@@ -35,6 +36,8 @@ namespace CleanArchitecture.Web.Api
       {
         var result = await _hydra.InstropectToken(accessToken, null);
         if (!result.Active)
+          return Unauthorized();
+        if (!string.IsNullOrEmpty(rule.Role) && result.Ext.Roles.Contains(rule.Role))
           return Unauthorized();
         Response.Headers.Add("X-Subject", result.Sub);
         Response.Headers.Add("X-User", result.Ext.Name);
