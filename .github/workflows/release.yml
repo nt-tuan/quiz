@@ -4,7 +4,6 @@ on:
   release:
     types:
       - published
-      - released
 jobs:
   build:
     env:
@@ -20,7 +19,8 @@ jobs:
         run: echo ${{ secrets.CR_PAT }} | docker login $DOCKER_REPOSITORY -u $GITHUB_ACTOR --password-stdin
       - uses: FranzDiebold/github-env-vars-action@v2
       # Build the Docker image
-      - run: |
+      - name: Build and Push
+        run: |
+          echo "build and push $DOCKER_REPOSITORY/$CI_REPOSITORY_OWNER/$IMAGE:$CI_ACTION_REF_NAME"
           docker build -t $DOCKER_REPOSITORY/$CI_REPOSITORY_OWNER/$IMAGE:$CI_ACTION_REF_NAME .
           docker push $DOCKER_REPOSITORY/$CI_REPOSITORY_OWNER/$IMAGE:$CI_ACTION_REF_NAME
-          docker push $DOCKER_REPOSITORY/$CI_REPOSITORY_OWNER/$JOB_IMAGE:$CI_ACTION_REF_NAME
