@@ -1,13 +1,17 @@
+using System;
+using System.Runtime.InteropServices.ComTypes;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using dmc_auth.Entities;
-using dmc_auth.Controllers.Models;
-using dmc_auth.Hydra;
-using dmc_auth.Hydra.Models;
+using ThanhTuan.IDP.Entities;
+using ThanhTuan.IDP.Controllers.Models;
+using ThanhTuan.IDP.Hydra;
+using ThanhTuan.IDP.Hydra.Models;
+using ThanhTuan.IDP.Data;
+using Microsoft.EntityFrameworkCore;
 
-namespace dmc_auth.Controllers
+namespace ThanhTuan.IDP.Controllers
 {
   [Route("api")]
   [ApiController]
@@ -15,11 +19,13 @@ namespace dmc_auth.Controllers
   {
     readonly UserManager<ApplicationUser> _userManager;
     readonly IHydra _hydra;
+    readonly ApplicationDbContext _db;
     public IDPController(UserManager<ApplicationUser> userManager,
-    IHydra hydra)
+    IHydra hydra, ApplicationDbContext db)
     {
       _userManager = userManager;
       _hydra = hydra;
+      _db = db;
     }
 
     [HttpGet]
@@ -36,9 +42,8 @@ namespace dmc_auth.Controllers
       var loginInfo = await _hydra.GetLoginInfo(login_challenge);
       if (loginInfo.Skip)
       {
-        var user = await _userManager.FindByIdAsync(loginInfo.Subject);
+        var user = await _userManager.FindByNameAsync(loginInfo.Subject);
         if (user == null) return BadRequest(IDPErrors.UserNotFound);
-        loginInfo.Username = user.UserName;
         return Ok(loginInfo);
       }
       return Ok(loginInfo);
@@ -67,7 +72,18 @@ namespace dmc_auth.Controllers
       {
         return BadRequest(IDPErrors.InvalidCredential);
       }
-      return await _hydra.AcceptLogin(new AcceptLoginRequest(appuser.Id), model.LoginChallenge);
+      var response = await _hydra.AcceptLogin(new AcceptLoginRequest(appuser.UserName), model.LoginChallenge);
+      var signInLog = new SignInLog
+      {
+        UserName = appuser.UserName,
+        IpAddress = Request.Headers["X-Real-IP"],
+        UserAgent = Request.Headers["User-Agent"],
+        AcceptedLoginAt = DateTimeOffset.Now,
+        LoginChallenge = model.LoginChallenge
+      };
+      _db.Add(signInLog);
+      await _db.SaveChangesAsync();
+      return response;
     }
 
 
@@ -76,12 +92,28 @@ namespace dmc_auth.Controllers
     public async Task<ActionResult<AcceptConsentResponse>> Consent(string consent_challenge)
     {
       var consent = await _hydra.GetConsentInfo(consent_challenge);
-      var user = await _userManager.FindByIdAsync(consent.Subject);
-      if (user == null) return BadRequest(IDPErrors.UserNotFound);
+      var user = await _userManager.FindByNameAsync(consent.Subject);
+      if (user == null)
+      {
+        var response = await _hydra.RejectConsent(new RejectConsentRequest
+        {
+          Error = "user-not-found",
+          ErrorDescription = "no user match this subject",
+          ErrorDebug = $"Subject {consent.Subject} is not found",
+          StatusCode = 404,
+        }, consent_challenge);
+        return BadRequest(response);
+      }
       var roles = await _userManager.GetRolesAsync(user);
-      // var roles = new[] { "user.admin", "user.get" };      
       var requestContent = new AcceptConsentRequest(consent, roles.ToArray(), user);
       var acceptResponse = await _hydra.AcceptConsent(requestContent, consent_challenge);
+      var signInLog = await _db.SignInLogs.FirstAsync(u => u.LoginChallenge == consent.LoginChallenge);
+      signInLog.ConsentChallenge = consent_challenge;
+      signInLog.RequestedScope = string.Join(",", consent.RequestedScope);
+      signInLog.GrantedScope = string.Join(",", requestContent.GrantScope);
+      signInLog.AcceptedConsentAt = DateTimeOffset.Now;
+      _db.Update(signInLog);
+      await _db.SaveChangesAsync();
       return acceptResponse;
     }
 

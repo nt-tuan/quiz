@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace dmc_auth.Hydra.Models
+namespace ThanhTuan.IDP.Hydra.Models
 {
   public class AcceptLogoutResponse
   {

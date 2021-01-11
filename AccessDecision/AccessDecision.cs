@@ -4,7 +4,7 @@ using System.Text.Json;
 using System;
 using System.IO;
 
-namespace dmc_auth.AccessDecision
+namespace ThanhTuan.IDP.AccessDecision
 {
   public class AccessDecision
   {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace dmc_auth.AccessDecision
+namespace ThanhTuan.IDP.AccessDecision
 {
   public class Rule
   {

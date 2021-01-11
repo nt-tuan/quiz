@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using dmc_auth.AccessDecision;
-using dmc_auth.Hydra;
+using ThanhTuan.IDP.AccessDecision;
+using ThanhTuan.IDP.Hydra;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,6 +21,9 @@ namespace CleanArchitecture.Web.Api
       _logger = logger;
       _hydra = hydra;
     }
+
+
+
     [HttpGet]
     public async Task<ActionResult> Get()
     {
@@ -34,14 +37,13 @@ namespace CleanArchitecture.Web.Api
       var accessToken = bearertoken["Bearer ".Length..];
       try
       {
-        var result = await _hydra.InstropectToken(accessToken, null);
+        var result = await _hydra.IntrospectToken(accessToken, null);
         if (!result.Active)
           return Unauthorized();
-        if (!string.IsNullOrEmpty(rule.Role) && !result.Ext.Roles.Contains(rule.Role))
+        var scope = result.Scope;
+        if (!string.IsNullOrEmpty(rule.Role) && !result.Scope.Contains(rule.Role))
           return Unauthorized();
         Response.Headers.Add("X-Subject", result.Sub);
-        Response.Headers.Add("X-User", result.Ext.Name);
-        Response.Headers.Add("X-Roles", string.Join(",", result.Ext.Roles));
         Response.Headers.Add("X-Scope", result.Scope);
         return Ok();
       }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace dmc_auth.Hydra.Models
+namespace ThanhTuan.IDP.Hydra.Models
 {
   public class TokenInstropectRequest
   {
@@ -11,7 +11,7 @@ namespace dmc_auth.Hydra.Models
     public string Scope { get; set; }
   }
 
-  public class TokenInstropectResponse
+  public class TokenIntrospectResponse
   {
     [JsonPropertyName("active")]
     public bool Active { get; set; }

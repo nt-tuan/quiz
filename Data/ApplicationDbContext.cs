@@ -1,14 +1,13 @@
-﻿using dmc_auth.Entities;
+﻿using ThanhTuan.IDP.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
 
-namespace dmc_auth.Data
+namespace ThanhTuan.IDP.Data
 {
   public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, String>
   {
-    public DbSet<Department> Departments { get; set; }
-    public DbSet<Employee> Employees { get; set; }
+    public DbSet<SignInLog> SignInLogs { get; set; }
     public ApplicationDbContext(
         DbContextOptions options) : base(options)
     {
@@ -17,9 +16,8 @@ namespace dmc_auth.Data
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
-      modelBuilder.Entity<Employee>().HasOne(u => u.Department).WithMany().HasForeignKey(u => u.DepartmentId);
-      modelBuilder.Entity<Department>().HasOne(u => u.Manager).WithMany().HasForeignKey(u => u.ManagerId);
-      modelBuilder.Entity<Department>().HasOne(u => u.Parent).WithMany().HasForeignKey(u => u.ParentId);
+      modelBuilder.Entity<SignInLog>().HasIndex(e => e.LoginChallenge);
+      modelBuilder.Entity<SignInLog>().HasIndex(e => e.ConsentChallenge);
       modelBuilder.Entity<ApplicationUser>().Property(e => e.Id).ValueGeneratedOnAdd();
     }
   }
