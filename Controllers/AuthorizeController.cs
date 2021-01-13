@@ -44,7 +44,7 @@ namespace CleanArchitecture.Web.Api
         if (string.IsNullOrEmpty(rule.Scope)) return Ok();
         var scope = result.Scope;
         if (!result.Scope.Contains(rule.Scope))
-          return Forbid();
+          return StatusCode(403);
         return Ok();
       }
       catch (Exception e)
