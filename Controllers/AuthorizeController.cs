@@ -22,8 +22,6 @@ namespace CleanArchitecture.Web.Api
       _hydra = hydra;
     }
 
-
-
     [HttpGet]
     public async Task<ActionResult> Get()
     {
@@ -31,22 +29,22 @@ namespace CleanArchitecture.Web.Api
       var path = Request.Headers["X-Request-Uri"];
       var method = Request.Headers["X-Request-Method"];
       var rule = _decision.GetFirstMatchedRule(path, method);
-      if (string.IsNullOrEmpty(bearertoken)) return Unauthorized();
-      if (bearertoken.Length <= "Bearer".Length) return Unauthorized();
+      if (rule == null) return Ok();
+      if (string.IsNullOrEmpty(bearertoken)) return Unauthorized("no-authentication-found");
+      if (bearertoken.Length <= "Bearer".Length) return Unauthorized("no-authentication-found");
       var accessToken = bearertoken["Bearer ".Length..];
       try
       {
         var result = await _hydra.IntrospectToken(accessToken, null);
         if (!result.Active)
-          return Unauthorized();
+          return Unauthorized("invalidated-token");
         _logger.LogInformation("Subject {0}, Scope {1}", result.Sub, result.Scope);
         Response.Headers.Add("X-Subject", result.Sub);
         Response.Headers.Add("X-Scope", result.Scope);
-        if (rule == null) return Ok();
         if (string.IsNullOrEmpty(rule.Scope)) return Ok();
         var scope = result.Scope;
         if (!result.Scope.Contains(rule.Scope))
-          return Unauthorized();
+          return Unauthorized("invalid-scope");
         return Ok();
       }
       catch (Exception e)
