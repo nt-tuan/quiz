@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ThanhTuan.IDP.Hydra.Models;
+using ThanhTuan.IDP.Data;
 
 namespace CleanArchitecture.Web.Api
 {
@@ -20,10 +21,12 @@ namespace CleanArchitecture.Web.Api
     //private readonly ApplicationDbContext _context;    
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
+    private readonly ApplicationDbContext _db;
     private readonly IHydra _hydra;
 
-    public AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IHydra hydra)
+    public AdminController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IHydra hydra, ApplicationDbContext db)
     {
+      _db = db;
       _userManager = userManager;
       _roleManager = roleManager;
       _hydra = hydra;
@@ -96,7 +99,7 @@ namespace CleanArchitecture.Web.Api
       user.Fullname = model.Fullname;
       user.Nickname = model.Nickname;
       var result = await _userManager.UpdateAsync(user);
-      if (result.Succeeded) return new UserResponse(user, new List<string>());
+      if (result.Succeeded) return new UserResponse(user);
       return ResponseIdentityResultError(result);
     }
 
@@ -161,6 +164,14 @@ namespace CleanArchitecture.Web.Api
       var roleNames = await _userManager.GetRolesAsync(user);
       var roles = await _roleManager.Roles.Where(e => roleNames.Contains(e.Name)).ToListAsync();
       return roles.Select(role => new RoleResponse(role)).ToList();
+    }
+
+    [HttpGet("user/{id}/accessLogs")]
+    public async Task<ActionResult<List<SignInLog>>> GetAccessLogs(string id)
+    {
+      var user = await _userManager.FindByIdAsync(id);
+      if (user == null) return NotFound();
+      return await _db.GetAccessLogs(user.UserName);
     }
 
     [HttpGet("user/{id}/consentSessions")]

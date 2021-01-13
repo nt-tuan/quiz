@@ -43,7 +43,7 @@ namespace CleanArchitecture.Web.Api
     {
       var appUser = await GetUser();
       if (appUser == null) return NotFound();
-      return await _db.SignInLogs.Where(u => u.UserName == appUser.UserName).ToListAsync();
+      return await _db.GetAccessLogs(appUser.UserName);
     }
 
     [HttpPost("changepassword")]
@@ -77,6 +77,27 @@ namespace CleanArchitecture.Web.Api
       return Ok();
     }
 
+    [HttpPut]
+    public async Task<ActionResult<UserResponse>> UpdateProfile(EditUserModel model)
+    {
+      var user = await GetUser();
+      if (user == null) return NotFound();
+      user.Email = model.Email;
+      user.PhoneNumber = model.Phone;
+      user.Fullname = model.Fullname;
+      user.Nickname = model.Nickname;
+      user.Image = model.Image;
+      if (model.LockoutEnable != null)
+      {
+        user.LockoutEnabled = model.LockoutEnable.Value;
+      }
+      if (model.LockoutEnd != null)
+      {
+        user.LockoutEnd = model.LockoutEnd;
+      }
+      await _userManager.UpdateAsync(user);
+      return new UserResponse(user);
+    }
     private async Task<ApplicationUser> GetUser()
     {
       var subject = Request.Headers[Constant.USER_HEADER_KEY];

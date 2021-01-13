@@ -16,7 +16,7 @@ namespace ThanhTuan.IDP.Controllers.Models
     public IList<string> Roles { get; set; }
     public bool LockoutEnable { get; set; }
     public DateTimeOffset? LockoutEnd { get; set; }
-    public UserResponse(ApplicationUser entity, IList<string> roles)
+    public UserResponse(ApplicationUser entity)
     {
       Id = entity.Id;
       Username = entity.UserName;
@@ -27,6 +27,9 @@ namespace ThanhTuan.IDP.Controllers.Models
       Nickname = entity.Nickname;
       Image = entity.Image;
       Phone = entity.PhoneNumber;
+    }
+    public UserResponse(ApplicationUser entity, IList<string> roles) : this(entity)
+    {
       Roles = roles;
     }
   }
