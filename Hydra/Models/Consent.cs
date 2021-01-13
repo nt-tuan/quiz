@@ -5,14 +5,16 @@ using ThanhTuan.IDP.Entities;
 using ThanhTuan.IDP;
 namespace ThanhTuan.IDP.Hydra.Models
 {
-  public class ConsentAcceptAccessTokenBody
-  {
-  }
+
   public class ConsentAcceptIDTokenBody
   {
+    [JsonPropertyName("picture")]
+    public string Picture { get; set; }
   }
   public class ConsentAcceptSessionBody
   {
+    [JsonPropertyName("picture")]
+    public string Picture { get; set; }
   }
   public class AcceptConsentRequest
   {
@@ -25,7 +27,7 @@ namespace ThanhTuan.IDP.Hydra.Models
     [JsonPropertyName("remember_for")]
     public ulong RememberFor { get; set; } = Constant.GetRememberDuration();
     [JsonPropertyName("session")]
-    public ConsentAcceptSessionBody Session { get; set; }
+    public Session Session { get; set; }
     public AcceptConsentRequest(ConsentInfo consent, string[] roles, ApplicationUser user)
     {
       var grantScopes = new List<string>();
@@ -44,7 +46,17 @@ namespace ThanhTuan.IDP.Hydra.Models
       }
       GrantScope = grantScopes.ToArray();
       GrantAccessTokenAudience = consent.RequestedAccessTokenAudience;
-      Session = new ConsentAcceptSessionBody();
+      Session = new Session
+      {
+        AccessToken = new ConsentAcceptSessionBody
+        {
+          Picture = user.Image
+        },
+        IdToken = new ConsentAcceptIDTokenBody
+        {
+          Picture = user.Image
+        }
+      };
     }
   }
 

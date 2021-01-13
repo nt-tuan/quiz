@@ -26,7 +26,7 @@ namespace ThanhTuan.IDP.Hydra.Models
     public int Exp { get; set; }
 
     [JsonPropertyName("ext")]
-    public ConsentAcceptAccessTokenBody Ext { get; set; }
+    public ConsentAcceptSessionBody Ext { get; set; }
 
     [JsonPropertyName("iat")]
     public int Iat { get; set; }

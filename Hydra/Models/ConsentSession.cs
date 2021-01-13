@@ -172,7 +172,7 @@ namespace ThanhTuan.IDP.Hydra.Models
   public class Session
   {
     [JsonPropertyName("access_token")]
-    public ConsentAcceptAccessTokenBody AccessToken { get; set; }
+    public ConsentAcceptSessionBody AccessToken { get; set; }
 
     [JsonPropertyName("id_token")]
     public ConsentAcceptIDTokenBody IdToken { get; set; }
