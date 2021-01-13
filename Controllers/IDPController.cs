@@ -42,10 +42,9 @@ namespace ThanhTuan.IDP.Controllers
       var loginInfo = await _hydra.GetLoginInfo(login_challenge);
       if (loginInfo.Skip)
       {
-        var appuser = await _userManager.FindByNameAsync(loginInfo.Subject);
         var signInLog = new SignInLog
         {
-          UserName = appuser.UserName,
+          UserName = loginInfo.Subject,
           IpAddress = Request.Headers["X-Real-IP"],
           UserAgent = Request.Headers["User-Agent"],
           AcceptedLoginAt = DateTimeOffset.Now,
@@ -53,6 +52,7 @@ namespace ThanhTuan.IDP.Controllers
         };
         _db.Add(signInLog);
         await _db.SaveChangesAsync();
+        var appuser = await _userManager.FindByNameAsync(loginInfo.Subject);
         if (appuser == null) return BadRequest(IDPErrors.UserNotFound);
         return Ok(loginInfo);
       }
