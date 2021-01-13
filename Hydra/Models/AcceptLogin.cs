@@ -25,9 +25,5 @@ namespace ThanhTuan.IDP.Hydra.Models
     }
   }
 
-  public class AcceptLoginResponse
-  {
-    [JsonPropertyName("redirect_to")]
-    public string RedirectTo { get; set; }
-  }
+
 }

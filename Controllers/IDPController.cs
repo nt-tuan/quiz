@@ -53,7 +53,15 @@ namespace ThanhTuan.IDP.Controllers
         _db.Add(signInLog);
         await _db.SaveChangesAsync();
         var appuser = await _userManager.FindByNameAsync(loginInfo.Subject);
-        if (appuser == null) return BadRequest(IDPErrors.UserNotFound);
+        if (appuser == null)
+        {
+          var response = await _hydra.RejectLogin(new RejectRequest
+          {
+            Error = "user not found",
+            ErrorDescription = $"subject {loginInfo.Subject} not found"
+          }, login_challenge);
+          return BadRequest(response);
+        }
         return Ok(loginInfo);
       }
       return Ok(loginInfo);
@@ -61,7 +69,7 @@ namespace ThanhTuan.IDP.Controllers
 
     [HttpPost]
     [Route("login")]
-    public async Task<ActionResult<AcceptLoginResponse>> Login(Login model)
+    public async Task<ActionResult<RedirectResponse>> Login(Login model)
     {
       var loginInfo = await _hydra.GetLoginInfo(model.LoginChallenge);
       if (loginInfo.Skip)
@@ -99,13 +107,13 @@ namespace ThanhTuan.IDP.Controllers
 
     [HttpPost]
     [Route("consent/accept")]
-    public async Task<ActionResult<AcceptConsentResponse>> Consent(string consent_challenge)
+    public async Task<ActionResult<RedirectResponse>> Consent(string consent_challenge)
     {
       var consent = await _hydra.GetConsentInfo(consent_challenge);
       var user = await _userManager.FindByNameAsync(consent.Subject);
       if (user == null)
       {
-        var response = await _hydra.RejectConsent(new RejectConsentRequest
+        var response = await _hydra.RejectConsent(new RejectRequest
         {
           Error = "user-not-found",
           ErrorDescription = "no user match this subject",

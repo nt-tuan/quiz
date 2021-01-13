@@ -48,12 +48,6 @@ namespace ThanhTuan.IDP.Hydra.Models
     }
   }
 
-  public class AcceptConsentResponse
-  {
-    [JsonPropertyName("redirect_to")]
-    public string RedirectTo { get; set; }
-  }
-
   public class ConsentInfo
   {
     [JsonPropertyName("requested_access_token_audience")]
@@ -66,7 +60,7 @@ namespace ThanhTuan.IDP.Hydra.Models
     public string LoginChallenge { get; set; }
   }
 
-  public class RejectConsentRequest
+  public class RejectRequest
   {
     [JsonPropertyName("error")]
     public string Error { get; set; }

@@ -15,9 +15,10 @@ namespace ThanhTuan.IDP.Hydra
   {
     Task<LoginInfo> GetLoginInfo(string challenge);
     Task<ConsentInfo> GetConsentInfo(string challenge);
-    Task<AcceptLoginResponse> AcceptLogin(AcceptLoginRequest request, string challenge);
-    Task<AcceptConsentResponse> AcceptConsent(AcceptConsentRequest requestContent, string challenge);
-    Task<AcceptConsentResponse> RejectConsent(RejectConsentRequest payload, string consent_challenge);
+    Task<RedirectResponse> AcceptLogin(AcceptLoginRequest request, string challenge);
+    Task<RedirectResponse> RejectLogin(RejectRequest payload, string challenge);
+    Task<RedirectResponse> AcceptConsent(AcceptConsentRequest requestContent, string challenge);
+    Task<RedirectResponse> RejectConsent(RejectRequest payload, string consent_challenge);
     Task<AcceptLogoutResponse> AcceptLogout(string challenge);
     Task<TokenIntrospectResponse> IntrospectToken(string token, string scope);
     Task<List<ConsentSection>> ListAllConsentSessions(string subject);
@@ -26,7 +27,7 @@ namespace ThanhTuan.IDP.Hydra
 
   public class Hydra : IHydra
   {
-    public async Task<AcceptConsentResponse> AcceptConsent(AcceptConsentRequest requestContent, string challenge)
+    public async Task<RedirectResponse> AcceptConsent(AcceptConsentRequest requestContent, string challenge)
     {
       var authURL = $"{Constant.GetAuthURL()}/oauth2/auth/requests/consent/accept?consent_challenge={challenge}";
       var client = GetClient();
@@ -36,13 +37,13 @@ namespace ThanhTuan.IDP.Hydra
       var stringContent = await response.Content.ReadAsStringAsync();
       if (response.StatusCode == HttpStatusCode.OK)
       {
-        var acceptResponse = JsonSerializer.Deserialize<AcceptConsentResponse>(stringContent);
+        var acceptResponse = JsonSerializer.Deserialize<RedirectResponse>(stringContent);
         return acceptResponse;
       }
       throw new Exception(stringContent);
     }
 
-    public async Task<AcceptLoginResponse> AcceptLogin(AcceptLoginRequest requestContent, string challenge)
+    public async Task<RedirectResponse> AcceptLogin(AcceptLoginRequest requestContent, string challenge)
     {
       var client = GetClient();
       var acceptURL = $"{Constant.GetAuthURL()}/oauth2/auth/requests/login/accept?login_challenge={challenge}";
@@ -51,13 +52,27 @@ namespace ThanhTuan.IDP.Hydra
       var stringContent = await response.Content.ReadAsStringAsync();
       if (response.StatusCode == HttpStatusCode.OK)
       {
-        var acceptResponse = JsonSerializer.Deserialize<AcceptLoginResponse>(stringContent);
+        var acceptResponse = JsonSerializer.Deserialize<RedirectResponse>(stringContent);
         return acceptResponse;
       }
       throw new Exception(stringContent);
     }
 
-    public async Task<AcceptConsentResponse> RejectConsent(RejectConsentRequest payload, string consent_challenge)
+    public async Task<RedirectResponse> RejectLogin(RejectRequest payload, string challenge)
+    {
+      var client = GetClient();
+      var stringRequestContent = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+      var url = $"{Constant.GetAuthURL()}/oauth2/auth/requests/login/reject?login_challenge={challenge}";
+      var responseMessage = await client.PutAsync(url, stringRequestContent);
+      var responseText = await responseMessage.Content.ReadAsStringAsync();
+      if (responseMessage.StatusCode == HttpStatusCode.OK)
+      {
+        return JsonSerializer.Deserialize<RedirectResponse>(responseText);
+      }
+      throw new Exception(responseText);
+    }
+
+    public async Task<RedirectResponse> RejectConsent(RejectRequest payload, string consent_challenge)
     {
       var url = $"{Constant.GetAuthURL()}/oauth2/auth/requests/consent/reject?consent_challenge={consent_challenge}";
       var stringRequestContent = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
@@ -66,7 +81,7 @@ namespace ThanhTuan.IDP.Hydra
       var responseText = await responseMessage.Content.ReadAsStringAsync();
       if (responseMessage.StatusCode == HttpStatusCode.OK)
       {
-        var rejectPayload = JsonSerializer.Deserialize<AcceptConsentResponse>(responseText);
+        var rejectPayload = JsonSerializer.Deserialize<RedirectResponse>(responseText);
         return rejectPayload;
       }
       throw new Exception(responseText);
