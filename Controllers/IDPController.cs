@@ -143,5 +143,14 @@ namespace ThanhTuan.IDP.Controllers
       var acceptResponse = await _hydra.AcceptLogout(logout_challenge);
       return acceptResponse;
     }
+
+    [HttpGet]
+    [Route("userInfo/{name}")]
+    public async Task<ActionResult<PublicUserInfo>> GetUser(string name)
+    {
+      var user = await _userManager.FindByNameAsync(name);
+      if (user == null) return NotFound();
+      return new PublicUserInfo(user);
+    }
   }
 }
