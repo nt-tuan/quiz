@@ -40,8 +40,9 @@ namespace CleanArchitecture.Web.Api
         var result = await _hydra.IntrospectToken(accessToken, null);
         if (!result.Active)
           return Unauthorized();
+        if (string.IsNullOrEmpty(rule.Scope)) return Ok();
         var scope = result.Scope;
-        if (!string.IsNullOrEmpty(rule.Role) && !result.Scope.Contains(rule.Role))
+        if (!result.Scope.Contains(rule.Scope))
           return Unauthorized();
         Response.Headers.Add("X-Subject", result.Sub);
         Response.Headers.Add("X-Scope", result.Scope);
