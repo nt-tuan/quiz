@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ThanhTuan.Quiz.Entities
 {
@@ -10,6 +11,7 @@ namespace ThanhTuan.Quiz.Entities
     public string Content { get; set; }
 
     public ICollection<AnswerOption> AnswerOptions { get; set; }
+    [JsonIgnore]
     public Exam Exam { get; set; }
   }
 }
