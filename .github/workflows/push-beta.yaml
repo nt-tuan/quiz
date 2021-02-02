@@ -8,7 +8,7 @@ jobs:
   build:
     env:
       DOCKER_REPOSITORY: ghcr.io
-      IMAGE: idp
+      IMAGE: quiz
     name: Build and push
     runs-on: ubuntu-latest
     # needs: [test]

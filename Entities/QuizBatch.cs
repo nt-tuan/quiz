@@ -1,0 +1,13 @@
+using System.Collections;
+using System.Collections.Generic;
+
+namespace ThanhTuan.Quiz.Entities
+{
+  public class Exam
+  {
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public ICollection<Question> Questions { get; set; }
+  }
+}

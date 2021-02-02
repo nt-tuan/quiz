@@ -1,16 +1,14 @@
-﻿using ThanhTuan.IDP.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using ThanhTuan.Quiz.Entities;
 
-namespace ThanhTuan.IDP.Data
+namespace ThanhTuan.Quiz.Data
 {
-  public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, String>
+  public class ApplicationDbContext : DbContext
   {
-    public DbSet<SignInLog> SignInLogs { get; set; }
+    public DbSet<Exam> Exams { get; set; }
+    public DbSet<Question> Questions { get; set; }
+    public DbSet<AnswerOption> AnswerOptions { get; set; }
+
     public ApplicationDbContext(
         DbContextOptions options) : base(options)
     {
@@ -19,14 +17,8 @@ namespace ThanhTuan.IDP.Data
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
-      modelBuilder.Entity<SignInLog>().HasIndex(e => e.LoginChallenge);
-      modelBuilder.Entity<SignInLog>().HasIndex(e => e.ConsentChallenge);
-      modelBuilder.Entity<ApplicationUser>().Property(e => e.Id).ValueGeneratedOnAdd();
-    }
-
-    public async Task<List<SignInLog>> GetAccessLogs(string userName)
-    {
-      return await SignInLogs.Where(u => u.UserName == userName).OrderByDescending(u => u.Id).ToListAsync();
+      modelBuilder.Entity<Question>().HasOne(u => u.Exam).WithMany(u => u.Questions).HasForeignKey(u => u.ExamId);
+      modelBuilder.Entity<AnswerOption>().HasOne(u => u.Question).WithMany(u => u.AnswerOptions).HasForeignKey(u => u.QuestionId);
     }
   }
 }
