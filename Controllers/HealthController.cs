@@ -5,10 +5,11 @@ using ThanhTuan.Quiz.Entities;
 
 namespace ThanhTuan.Quiz.Controllers
 {
-  [Route("")]
+  [Route("health")]
   [ApiController]
   public class Healthontroller : ControllerBase
   {
+    [HttpGet]
     public ActionResult Get()
     {
       return Ok();
