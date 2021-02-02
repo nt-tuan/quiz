@@ -62,6 +62,12 @@ namespace ThanhTuan.Quiz
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         app.UseHsts();
       }
+      using (var scope = app.ApplicationServices.CreateScope())
+      {
+        var db = scope.ServiceProvider.GetService<ApplicationDbContext>();
+        db.Database.Migrate();
+      }
+
       // Enable middleware to serve generated Swagger as a JSON endpoint.
       app.UseSwagger();
 
