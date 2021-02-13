@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ThanhTuan.Quiz.Data;
@@ -26,6 +27,8 @@ namespace ThanhTuan.Quiz.Controllers
     [HttpPost]
     public async Task<ActionResult<Exam>> CreateExam(Exam exam)
     {
+      exam.CreatedBy = Request.Headers["X-User"];
+      exam.CreatedAt = DateTimeOffset.Now;
       _db.Add(exam);
       await _db.SaveChangesAsync();
       return exam;
@@ -39,7 +42,7 @@ namespace ThanhTuan.Quiz.Controllers
     [HttpGet("{id}")]
     public async Task<ActionResult<Exam>> GetExam(int id)
     {
-      return await _db.Exams.FindAsync(id);
+      return await _db.Exams.Include(u => u.Questions).ThenInclude(u => u.AnswerOptions).FirstAsync(u => u.Id == id);
     }
 
     /// <summary>
@@ -72,8 +75,10 @@ namespace ThanhTuan.Quiz.Controllers
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteExam(int id)
     {
-      var exam = await _db.Exams.FindAsync(id);
-      _db.Remove(exam);
+      var exam = await _db.Exams.FirstAsync(u => u.Id == id);
+      exam.DeletedAt = DateTimeOffset.Now;
+      exam.DeletedBy = Request.Headers["X-User"];
+      _db.Update(exam);
       await _db.SaveChangesAsync();
       return Ok();
     }

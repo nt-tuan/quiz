@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ThanhTuan.Quiz.Entities
 {
-  public class AnswerOption
+  public class AnswerOption : BaseEntity
   {
     public int Id { get; set; }
     public string Content { get; set; }

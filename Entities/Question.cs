@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace ThanhTuan.Quiz.Entities
 {
-  public class Question
+  public class Question : BaseEntity
   {
     public int Id { get; set; }
     public int ExamId { get; set; }

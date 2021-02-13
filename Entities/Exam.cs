@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ThanhTuan.Quiz.Entities
 {
-  public class Exam
+  public class Exam : BaseEntity
   {
     public int Id { get; set; }
     public string Title { get; set; }
