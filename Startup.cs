@@ -2,8 +2,7 @@ using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using ThanhTuan.Quiz.Data;
-using ThanhTuan.Quiz.Entities;
+using ThanhTuan.Quiz.DBContext;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Reflection;
+using ThanhTuan.Quiz.Repositories;
+using ThanhTuan.Quiz.Services;
 
 namespace ThanhTuan.Quiz
 {
@@ -39,7 +40,10 @@ namespace ThanhTuan.Quiz
       {
         options.UseNpgsql(Configuration.GetConnectionString("DatabaseURL"));
       });
+      services.AddHttpContextAccessor();
       services.AddControllers();
+      services.AddScoped<ExamRepository>();
+      services.AddScoped<Authorizer>();
       services.AddSwaggerGen(c =>
         {
           var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

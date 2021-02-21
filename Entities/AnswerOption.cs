@@ -6,7 +6,6 @@ namespace ThanhTuan.Quiz.Entities
 {
   public class AnswerOption : BaseEntity
   {
-    public int Id { get; set; }
     public string Content { get; set; }
     public int QuestionId { get; set; }
     [JsonIgnore]

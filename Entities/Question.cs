@@ -6,7 +6,6 @@ namespace ThanhTuan.Quiz.Entities
 {
   public class Question : BaseEntity
   {
-    public int Id { get; set; }
     public int ExamId { get; set; }
     public string Content { get; set; }
 

@@ -4,101 +4,101 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ThanhTuan.Quiz.Data;
+using ThanhTuan.Quiz.DBContext;
 
 namespace dmc_auth.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210202075945_intial database")]
-    partial class intialdatabase
+  [DbContext(typeof(ApplicationDbContext))]
+  [Migration("20210202075945_intial database")]
+  partial class intialdatabase
+  {
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.6")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+      modelBuilder
+          .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+          .HasAnnotation("ProductVersion", "3.1.6")
+          .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("ThanhTuan.Quiz.Entities.AnswerOption", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+      modelBuilder.Entity("ThanhTuan.Quiz.Entities.AnswerOption", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("integer")
+                      .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Content")
-                        .HasColumnType("text");
+            b.Property<string>("Content")
+                      .HasColumnType("text");
 
-                    b.Property<bool>("IsCorrect")
-                        .HasColumnType("boolean");
+            b.Property<bool>("IsCorrect")
+                      .HasColumnType("boolean");
 
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("integer");
+            b.Property<int>("QuestionId")
+                      .HasColumnType("integer");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("QuestionId");
+            b.HasIndex("QuestionId");
 
-                    b.ToTable("AnswerOptions");
-                });
+            b.ToTable("AnswerOptions");
+          });
 
-            modelBuilder.Entity("ThanhTuan.Quiz.Entities.Exam", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+      modelBuilder.Entity("ThanhTuan.Quiz.Entities.Exam", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("integer")
+                      .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
+            b.Property<string>("Description")
+                      .HasColumnType("text");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
+            b.Property<string>("Title")
+                      .HasColumnType("text");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.ToTable("Exams");
-                });
+            b.ToTable("Exams");
+          });
 
-            modelBuilder.Entity("ThanhTuan.Quiz.Entities.Question", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+      modelBuilder.Entity("ThanhTuan.Quiz.Entities.Question", b =>
+          {
+            b.Property<int>("Id")
+                      .ValueGeneratedOnAdd()
+                      .HasColumnType("integer")
+                      .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("Content")
-                        .HasColumnType("text");
+            b.Property<string>("Content")
+                      .HasColumnType("text");
 
-                    b.Property<int>("ExamId")
-                        .HasColumnType("integer");
+            b.Property<int>("ExamId")
+                      .HasColumnType("integer");
 
-                    b.HasKey("Id");
+            b.HasKey("Id");
 
-                    b.HasIndex("ExamId");
+            b.HasIndex("ExamId");
 
-                    b.ToTable("Questions");
-                });
+            b.ToTable("Questions");
+          });
 
-            modelBuilder.Entity("ThanhTuan.Quiz.Entities.AnswerOption", b =>
-                {
-                    b.HasOne("ThanhTuan.Quiz.Entities.Question", "Question")
-                        .WithMany("AnswerOptions")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+      modelBuilder.Entity("ThanhTuan.Quiz.Entities.AnswerOption", b =>
+          {
+            b.HasOne("ThanhTuan.Quiz.Entities.Question", "Question")
+                      .WithMany("AnswerOptions")
+                      .HasForeignKey("QuestionId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
+          });
 
-            modelBuilder.Entity("ThanhTuan.Quiz.Entities.Question", b =>
-                {
-                    b.HasOne("ThanhTuan.Quiz.Entities.Exam", "Exam")
-                        .WithMany("Questions")
-                        .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+      modelBuilder.Entity("ThanhTuan.Quiz.Entities.Question", b =>
+          {
+            b.HasOne("ThanhTuan.Quiz.Entities.Exam", "Exam")
+                      .WithMany("Questions")
+                      .HasForeignKey("ExamId")
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .IsRequired();
+          });
 #pragma warning restore 612, 618
-        }
     }
+  }
 }
