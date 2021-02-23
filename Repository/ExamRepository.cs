@@ -95,6 +95,11 @@ namespace ThanhTuan.Quiz.Repositories
       await _db.SaveChangesAsync();
     }
 
+    public async Task<List<Label>> GetLabels()
+    {
+      return await List(_db.Labels.AsQueryable());
+    }
+
     public async Task<Label> AddLabel(Label label, string by)
     {
       var entity = await Add(label, by);

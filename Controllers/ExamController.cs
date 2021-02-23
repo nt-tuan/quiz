@@ -89,7 +89,7 @@ namespace ThanhTuan.Quiz.Controllers
     }
 
     /// <summary>
-    /// Remote a label of an exam
+    /// Remove a label of an exam
     /// </summary>
     /// <param name="id"></param>
     /// <param name="label"></param>
@@ -99,6 +99,16 @@ namespace ThanhTuan.Quiz.Controllers
     {
       await _repo.DetachLabel(id, label);
       return Ok();
+    }
+
+    /// <summary>
+    /// Get all labels
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("labels")]
+    public async Task<ActionResult<List<Label>>> GetLabels()
+    {
+      return await _repo.GetLabels();
     }
 
     /// <summary>
