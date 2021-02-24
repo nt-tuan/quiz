@@ -57,7 +57,9 @@ namespace ThanhTuan.Quiz.Repositories
 
     public async Task<List<Exam>> GetExams(int labelId)
     {
-      return await List(_db.Exams.Where(u => u.Labels.Where(u => u.Id == labelId).Any()));
+      return await List(_db.Exams.
+      Include(exam => exam.Labels).
+      Where(u => u.Labels.Where(u => u.Id == labelId).Any()));
     }
 
     public async Task<Exam> GetExamBySlug(string slug)

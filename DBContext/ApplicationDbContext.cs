@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using ThanhTuan.Quiz.Entities;
 
 namespace ThanhTuan.Quiz.DBContext
@@ -15,6 +16,9 @@ namespace ThanhTuan.Quiz.DBContext
         DbContextOptions options) : base(options)
     {
     }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    => optionsBuilder.LogTo(Console.WriteLine);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
