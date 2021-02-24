@@ -1,7 +1,9 @@
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using ThanhTuan.Quiz.Entities;
+using ThanhTuan.Quiz.Controllers.Models;
 using ThanhTuan.Quiz.Repositories;
 using ThanhTuan.Quiz.Services;
 
@@ -27,7 +29,9 @@ namespace ThanhTuan.Quiz.Controllers
     [HttpPost("exam")]
     public async Task<ActionResult<Exam>> CreateExam(Exam exam)
     {
-      return await _repo.AddExam(exam, exam.CreatedBy = _authorizer.GetUser());
+      var entity = exam.ToEntity();
+      await _repo.AddExam(entity, _authorizer.GetUser());
+      return new Exam(entity);
     }
 
     /// <summary>
@@ -38,7 +42,8 @@ namespace ThanhTuan.Quiz.Controllers
     [HttpGet("exam")]
     public async Task<ActionResult<Exam>> GetExam(string slug)
     {
-      return await _repo.GetExamBySlug(slug);
+      var entity = await _repo.GetExamBySlug(slug);
+      return new Exam(entity);
     }
 
     /// <summary>
@@ -49,7 +54,8 @@ namespace ThanhTuan.Quiz.Controllers
     [HttpGet("exams")]
     public async Task<ActionResult<List<Exam>>> GetExamList(int label)
     {
-      return await _repo.GetExams(label);
+      var exams = await _repo.GetExams(label);
+      return exams.Select(exam => new Exam(exam)).ToList();
     }
     /// <summary>
     /// Update an exam
@@ -59,7 +65,8 @@ namespace ThanhTuan.Quiz.Controllers
     [HttpPut("exam")]
     public async Task<ActionResult<Exam>> UpdateExam(Exam exam)
     {
-      await _repo.UpdateExam(exam, _authorizer.GetUser());
+      var entity = exam.ToEntity();
+      await _repo.UpdateExam(entity, _authorizer.GetUser());
       return exam;
     }
 
@@ -108,7 +115,8 @@ namespace ThanhTuan.Quiz.Controllers
     [HttpGet("labels")]
     public async Task<ActionResult<List<Label>>> GetLabels()
     {
-      return await _repo.GetLabels();
+      var entities = await _repo.GetLabels();
+      return entities.Select(label => new Label(label)).ToList();
     }
 
     /// <summary>
@@ -119,7 +127,8 @@ namespace ThanhTuan.Quiz.Controllers
     [HttpPost("label")]
     public async Task<ActionResult<Label>> AddLabel(Label label)
     {
-      return await _repo.AddLabel(label, _authorizer.GetUser());
+      var newLabel = await _repo.AddLabel(label.ToEntity(), _authorizer.GetUser());
+      return new Label(newLabel);
     }
 
     /// <summary>
@@ -130,7 +139,9 @@ namespace ThanhTuan.Quiz.Controllers
     [HttpPut("label")]
     public async Task<ActionResult<Label>> UpdateLabel(Label label)
     {
-      return await _repo.UpdateLabel(label, _authorizer.GetUser());
+      var entity = label.ToEntity();
+      entity = await _repo.UpdateLabel(entity, _authorizer.GetUser());
+      return new Label(entity);
     }
 
     /// <summary>

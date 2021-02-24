@@ -39,9 +39,11 @@ namespace ThanhTuan.Quiz
       services.AddTransient<Authorizer>();
       services.AddSwaggerGen(c =>
         {
-          var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-          var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-          c.IncludeXmlComments(xmlPath);
+          c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+          {
+            Title = "Quiz API",
+            Version = "v1"
+          });
         });
       services.AddCors(options =>
   {
