@@ -29,27 +29,27 @@ namespace ThanhTuan.Quiz
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddCors(options =>
-      {
-        options.AddPolicy(name: "all", builder =>
-              {
-                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-              });
-      });
+      services.AddControllers();
       services.AddDbContext<ApplicationDbContext>(options =>
       {
         options.UseNpgsql(Configuration.GetConnectionString("DatabaseURL"));
       });
       services.AddHttpContextAccessor();
-      services.AddControllers();
-      services.AddScoped<ExamRepository>();
-      services.AddScoped<Authorizer>();
+      services.AddTransient<ExamRepository>();
+      services.AddTransient<Authorizer>();
       services.AddSwaggerGen(c =>
         {
           var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
           var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
           c.IncludeXmlComments(xmlPath);
         });
+      services.AddCors(options =>
+  {
+    options.AddPolicy(name: "all", builder =>
+          {
+            builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+          });
+  });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -85,7 +85,7 @@ namespace ThanhTuan.Quiz
       app.UseCors("all");
       app.UseEndpoints(endpoints =>
       {
-        endpoints.MapDefaultControllerRoute();
+        endpoints.MapControllers();
       });
     }
   }

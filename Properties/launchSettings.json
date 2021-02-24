@@ -22,6 +22,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://0.0.0.0:5000",
+        "DatabaseURL": "Host=127.0.0.1;Database=quiz;Username=quiz;Password=quiz123",
         "AUTH_URL": "http://localhost:4445",
         "PUBLIC_AUTH_URL": "https://auth-test.my-shell.com",
         "CLIENT_ID": "9d1d815b-f4cc-4348-b025-7c8dcdf9e89e",
