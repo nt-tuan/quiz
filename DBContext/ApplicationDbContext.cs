@@ -19,7 +19,7 @@ namespace ThanhTuan.Quiz.DBContext
       ChangeTracker.StateChanged += UpdateTimestamps;
     }
 
-    private static void UpdateTimestamps(object sender, EntityEntryEventArgs e)
+    protected static void UpdateTimestamps(object sender, EntityEntryEventArgs e)
     {
       if (e.Entry.Entity is BaseEntity entity)
       {

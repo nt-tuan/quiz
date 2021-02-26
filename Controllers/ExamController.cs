@@ -52,7 +52,7 @@ namespace ThanhTuan.Quiz.Controllers
     /// <param name="label"></param>
     /// <returns>list of exams</returns>
     [HttpGet("exams")]
-    public async Task<ActionResult<List<Exam>>> GetExamList(int label)
+    public async Task<ActionResult<List<Exam>>> GetExamList(string label)
     {
       var exams = await _repo.GetExams(label);
       return exams.Select(exam => new Exam(exam)).ToList();

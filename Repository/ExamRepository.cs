@@ -55,11 +55,11 @@ namespace ThanhTuan.Quiz.Repositories
     }
     #endregion
 
-    public async Task<List<Exam>> GetExams(int labelId)
+    public async Task<List<Exam>> GetExams(string label)
     {
       return await List(_db.Exams.
       Include(exam => exam.Labels).
-      Where(u => u.Labels.Where(u => u.Id == labelId).Any()));
+      Where(u => u.Labels.Where(u => u.Value == label).Any()));
     }
 
     public async Task<Exam> GetExamBySlug(string slug)
