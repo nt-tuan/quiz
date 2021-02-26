@@ -15,6 +15,7 @@ namespace ThanhTuan.Quiz.Controllers.Models
     public List<Label> Labels { get; set; }
     public int? Duration { get; set; }
     public string Image { get; set; }
+    public string Slug { get; set; }
     public ExamEntry() { }
     public ExamEntry(Entities.Exam entity)
     {
@@ -26,6 +27,7 @@ namespace ThanhTuan.Quiz.Controllers.Models
       Labels = entity.Labels?.Select(label => new Label(label)).ToList();
       Duration = entity.Duration;
       Image = entity.Image;
+      Slug = entity.Slug;
     }
   }
 
