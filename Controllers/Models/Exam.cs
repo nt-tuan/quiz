@@ -29,16 +29,7 @@ namespace ThanhTuan.Quiz.Controllers.Models
       Image = entity.Image;
       Slug = entity.Slug;
     }
-  }
 
-  public class Exam : ExamEntry
-  {
-    public List<Question> Questions { get; set; }
-    public Exam() { }
-    public Exam(Entities.Exam entity) : base(entity)
-    {
-      Questions = entity.Questions?.Select(question => new Question(question)).ToList();
-    }
     public Entities.Exam ToEntity()
     {
       return new Entities.Exam
@@ -48,18 +39,17 @@ namespace ThanhTuan.Quiz.Controllers.Models
         Description = Description,
         Duration = Duration,
         Image = Image,
-        Questions = Questions?.Select(question => new Entities.Question
-        {
-          Id = question.Id,
-          Content = question.Content,
-          AnswerOptions = question.AnswerOptions?.Select(ans => new Entities.AnswerOption
-          {
-            Id = ans.Id,
-            Content = ans.Content,
-            IsCorrect = ans.IsCorrect
-          }).ToList()
-        }).ToList()
       };
+    }
+  }
+
+  public class Exam : ExamEntry
+  {
+    public List<Question> Questions { get; set; }
+    public Exam() { }
+    public Exam(Entities.Exam entity) : base(entity)
+    {
+      Questions = entity.Questions?.Select(question => new Question(question)).ToList();
     }
   }
 }

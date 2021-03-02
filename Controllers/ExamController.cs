@@ -9,7 +9,7 @@ using ThanhTuan.Quiz.Services;
 
 namespace ThanhTuan.Quiz.Controllers
 {
-  [Route("api")]
+  [Route("api/exam")]
   [ApiController]
   public class ExamController : ControllerBase
   {
@@ -26,7 +26,7 @@ namespace ThanhTuan.Quiz.Controllers
     /// </summary>
     /// <param name="exam"></param>
     /// <returns>exam</returns>
-    [HttpPost("exam")]
+    [HttpPost]
     public async Task<ActionResult<Exam>> CreateExam(Exam exam)
     {
       var entity = exam.ToEntity();
@@ -39,10 +39,11 @@ namespace ThanhTuan.Quiz.Controllers
     /// </summary>
     /// <param name="slug"></param>
     /// <returns>exam</returns>
-    [HttpGet("exam")]
+    [HttpGet]
     public async Task<ActionResult<Exam>> GetExam(string slug)
     {
       var entity = await _repo.GetExamBySlug(slug);
+      if (entity == null) return NotFound();
       return new Exam(entity);
     }
 
@@ -51,7 +52,7 @@ namespace ThanhTuan.Quiz.Controllers
     /// </summary>
     /// <param name="label"></param>
     /// <returns>list of exams</returns>
-    [HttpGet("exams")]
+    [HttpGet("list")]
     public async Task<ActionResult<List<Exam>>> GetExamList(string label)
     {
       var exams = await _repo.GetExams(label);
@@ -60,14 +61,14 @@ namespace ThanhTuan.Quiz.Controllers
     /// <summary>
     /// Update an exam
     /// </summary>
-    /// <param name="exam"></param>
+    /// <param name="model"></param>
     /// <returns>exam</returns>
-    [HttpPut("exam")]
-    public async Task<ActionResult<Exam>> UpdateExam(Exam exam)
+    [HttpPut]
+    public async Task<ActionResult<ExamEntry>> UpdateExam(ExamEntry model)
     {
-      var entity = exam.ToEntity();
+      var entity = model.ToEntity();
       await _repo.UpdateExam(entity, _authorizer.GetUser());
-      return exam;
+      return model;
     }
 
     /// <summary>
@@ -75,7 +76,7 @@ namespace ThanhTuan.Quiz.Controllers
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [HttpDelete("exam/{id}")]
+    [HttpDelete("id/{id}")]
     public async Task<ActionResult> DeleteExam(int id)
     {
       await _repo.DeleteExam(id, _authorizer.GetUser());
@@ -88,7 +89,7 @@ namespace ThanhTuan.Quiz.Controllers
     /// <param name="id"></param>
     /// <param name="label"></param>
     /// <returns></returns>
-    [HttpPut("exam/{id}/label/{label}")]
+    [HttpPut("id/{id}/label/{label}")]
     public async Task<ActionResult> AddExamLabel(int id, int label)
     {
       await _repo.AttachLabel(id, label);
@@ -101,58 +102,10 @@ namespace ThanhTuan.Quiz.Controllers
     /// <param name="id"></param>
     /// <param name="label"></param>
     /// <returns></returns>
-    [HttpDelete("exam/{id}/label/{label}")]
+    [HttpDelete("id/{id}/label/{label}")]
     public async Task<ActionResult> DeleteExamLabel(int id, int label)
     {
       await _repo.DetachLabel(id, label);
-      return Ok();
-    }
-
-    /// <summary>
-    /// Get all labels
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet("labels")]
-    public async Task<ActionResult<List<Label>>> GetLabels()
-    {
-      var entities = await _repo.GetLabels();
-      return entities.Select(label => new Label(label)).ToList();
-    }
-
-    /// <summary>
-    /// Create a new label
-    /// </summary>
-    /// <param name="label"></param>
-    /// <returns></returns>
-    [HttpPost("label")]
-    public async Task<ActionResult<Label>> AddLabel(Label label)
-    {
-      var newLabel = await _repo.AddLabel(label.ToEntity(), _authorizer.GetUser());
-      return new Label(newLabel);
-    }
-
-    /// <summary>
-    /// Update a label
-    /// </summary>
-    /// <param name="label"></param>
-    /// <returns></returns>
-    [HttpPut("label")]
-    public async Task<ActionResult<Label>> UpdateLabel(Label label)
-    {
-      var entity = label.ToEntity();
-      entity = await _repo.UpdateLabel(entity, _authorizer.GetUser());
-      return new Label(entity);
-    }
-
-    /// <summary>
-    /// Delete a label
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpDelete("label/{id}")]
-    public async Task<ActionResult> DeleteLabel(int id)
-    {
-      await _repo.DeleteLabel(id, _authorizer.GetUser());
       return Ok();
     }
   }

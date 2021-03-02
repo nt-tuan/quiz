@@ -4,7 +4,7 @@ namespace ThanhTuan.Quiz.Controllers
 {
   [Route("health")]
   [ApiController]
-  public class Healthontroller : ControllerBase
+  public class HealthController : ControllerBase
   {
     [HttpGet]
     public ActionResult Get()

@@ -36,6 +36,8 @@ namespace ThanhTuan.Quiz
       });
       services.AddHttpContextAccessor();
       services.AddTransient<ExamRepository>();
+      services.AddTransient<LabelRepository>();
+      services.AddTransient<ExamRepository>();
       services.AddTransient<Authorizer>();
       services.AddSwaggerGen(c =>
         {
@@ -44,6 +46,9 @@ namespace ThanhTuan.Quiz
             Title = "Quiz API",
             Version = "v1"
           });
+          var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+          var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+          c.IncludeXmlComments(xmlPath);
         });
       services.AddCors(options =>
   {

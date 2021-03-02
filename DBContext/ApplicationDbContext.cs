@@ -12,7 +12,7 @@ namespace ThanhTuan.Quiz.DBContext
     public DbSet<AnswerOption> AnswerOptions { get; set; }
     public DbSet<Label> Labels { get; set; }
     public DbSet<LabelKey> LabelKeys { get; set; }
-
+    public DbSet<Collection> Colletions { get; set; }
     public ApplicationDbContext(
         DbContextOptions options) : base(options)
     {
@@ -48,13 +48,18 @@ namespace ThanhTuan.Quiz.DBContext
       modelBuilder.Entity<Question>().HasOne(u => u.Exam).WithMany(u => u.Questions).HasForeignKey(u => u.ExamId);
       modelBuilder.Entity<AnswerOption>().HasOne(u => u.Question).WithMany(u => u.AnswerOptions).HasForeignKey(u => u.QuestionId);
       modelBuilder.Entity<LabelKey>().HasKey(u => u.Key);
-      modelBuilder.Entity<Label>().HasIndex(u => new { u.DeletedAt, u.KeyId, u.Value });
+      modelBuilder.Entity<Label>().HasIndex(u => new { u.DeletedAt, u.KeyId, u.Value }).IsUnique();
       modelBuilder.Entity<Exam>().HasMany(u => u.Labels).WithMany(label => label.Exams).UsingEntity<ExamLabel>(
-        r => r.HasOne(u => u.Label).WithMany(),
-        r => r.HasOne(u => u.Exam).WithMany()
+        r => r.HasOne<Label>().WithMany().HasForeignKey(u => u.LabelId),
+        r => r.HasOne<Exam>().WithMany().HasForeignKey(u => u.ExamId)
       );
       modelBuilder.Entity<Exam>().HasIndex(u => new { u.Slug, u.DeletedAt }).IsUnique();
-
+      modelBuilder.Entity<Collection>().HasIndex(u => new { u.Slug, u.DeletedAt }).IsUnique();
+      modelBuilder.Entity<Collection>().Property(u => u.Slug).IsRequired();
+      modelBuilder.Entity<Collection>().HasMany(u => u.Labels).WithMany(u => u.Collections).UsingEntity<LabelCollection>(
+        r => r.HasOne<Label>().WithMany().HasForeignKey(u => u.LabelId),
+        r => r.HasOne<Collection>().WithMany().HasForeignKey(u => u.CollectionId)
+      );
     }
   }
 }
