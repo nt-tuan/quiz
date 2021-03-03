@@ -12,32 +12,32 @@ namespace ThanhTuan.Quiz.DBContext
     public DbSet<AnswerOption> AnswerOptions { get; set; }
     public DbSet<Label> Labels { get; set; }
     public DbSet<LabelKey> LabelKeys { get; set; }
-    public DbSet<Collection> Colletions { get; set; }
+    public DbSet<Collection> Collections { get; set; }
     public ApplicationDbContext(
         DbContextOptions options) : base(options)
     {
-      ChangeTracker.StateChanged += UpdateTimestamps;
+      // ChangeTracker.StateChanged += UpdateTimestamps;
     }
 
-    protected static void UpdateTimestamps(object sender, EntityEntryEventArgs e)
-    {
-      if (e.Entry.Entity is BaseEntity entity)
-      {
-        switch (e.Entry.State)
-        {
-          case EntityState.Deleted:
-            entity.DeletedAt = DateTimeOffset.Now;
-            e.Entry.State = EntityState.Modified;
-            break;
-          case EntityState.Modified:
-            entity.UpdatedAt = DateTimeOffset.Now;
-            break;
-          case EntityState.Added:
-            entity.CreatedAt = DateTimeOffset.Now;
-            break;
-        }
-      }
-    }
+    // protected static void UpdateTimestamps(object sender, EntityEntryEventArgs e)
+    // {
+    //   if (e.Entry.Entity is BaseEntity entity)
+    //   {
+    //     switch (e.Entry.State)
+    //     {
+    //       case EntityState.Deleted:
+    //         entity.DeletedAt = DateTimeOffset.Now;
+    //         e.Entry.State = EntityState.Modified;
+    //         break;
+    //       case EntityState.Modified:
+    //         entity.UpdatedAt = DateTimeOffset.Now;
+    //         break;
+    //       case EntityState.Added:
+    //         entity.CreatedAt = DateTimeOffset.Now;
+    //         break;
+    //     }
+    //   }
+    // }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     => optionsBuilder.LogTo(Console.WriteLine);

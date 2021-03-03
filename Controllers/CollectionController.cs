@@ -22,13 +22,21 @@ namespace ThanhTuan.Quiz.Controllers
     }
 
     [HttpGet]
-    public async Task<List<Models.Collection>> GetCollections()
+    public async Task<List<Models.CollectionEntry>> GetCollections()
     {
       var entities = await _repo.GetLabelCollections();
-      return entities.Select(entity => new Models.Collection(entity)).ToList();
+      return entities.Select(entity => new Models.CollectionEntry(entity)).ToList();
     }
 
-    [HttpPost()]
+    [HttpGet("{slug}")]
+    public async Task<ActionResult<Models.Collection>> GetCollectionBySlug(string slug)
+    {
+      var entity = await _repo.GetCollectionBySlug(slug);
+      if (entity == null) return NotFound();
+      return new Models.Collection(entity);
+    }
+
+    [HttpPost]
     public async Task<Models.Collection> AddCollection(EditCollection model)
     {
       var entity = model.ToEntity();
@@ -37,13 +45,13 @@ namespace ThanhTuan.Quiz.Controllers
     }
 
     [HttpPut("{id}")]
-    public async Task<Models.Collection> UpdateCollection(int id, EditCollection model)
+    public async Task<Models.CollectionEntry> UpdateCollection(int id, EditCollection model)
     {
       var entity = model.ToEntity();
       entity.Id = id;
       entity.Labels = null;
       var updatedEntity = await _repo.UpdateCollection(entity, _authorizer.GetUser());
-      return new Models.Collection(updatedEntity);
+      return new Models.CollectionEntry(updatedEntity);
     }
 
     [HttpPut("{id}/label/{labelId}")]

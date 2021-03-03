@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,7 +38,12 @@ namespace ThanhTuan.Quiz.Repositories
 
     public async Task<List<Collection>> GetLabelCollections()
     {
-      return await _repo.List(_db.Colletions.OrderBy(u => u.Rank));
+      return await _repo.List(_db.Collections.OrderBy(u => u.Rank));
+    }
+
+    public async Task<Collection> GetCollectionBySlug(string slug)
+    {
+      return await _repo.FirstOrDefault(_db.Collections.Include(u => u.Labels).Where(u => u.Slug == slug));
     }
 
     public async Task<Collection> AddCollection(Collection entity, string by)
