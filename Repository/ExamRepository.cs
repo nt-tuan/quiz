@@ -27,7 +27,11 @@ namespace ThanhTuan.Quiz.Repositories
 
     public async Task<Exam> GetExamBySlug(string slug)
     {
-      return await _repo.FirstOrDefault(_db.Exams.Include(u => u.Questions).ThenInclude(u => u.AnswerOptions).Where(u => u.Slug == slug));
+      return await _repo.FirstOrDefault(_db.Exams
+      .Include(u => u.Questions)
+      .ThenInclude(u => u.AnswerOptions)
+      .Include(u => u.Labels)
+      .Where(u => u.Slug == slug));
     }
 
     public async Task<Exam> UpdateExam(Exam exam, string by)
