@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using dmc_auth.Migrations;
 
 namespace ThanhTuan.Quiz.Controllers.Models
 {

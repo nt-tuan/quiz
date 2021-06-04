@@ -3,7 +3,7 @@ version: "3.4"
 services:
   quiz:
     image: quiz
-    build: ./web/Dockerfile
+    build: ./Web
     ports:
       - 80:80
     depends_on:
@@ -12,6 +12,7 @@ services:
       - ./Content:/data
     environment:
       ConnectionStrings__DatabaseURL: Host=db;Database=quiz;Username=quiz;Password=quiz123
+      AppSettings__Secret: asghasglasnkj2honalsngalskg1ognlagl12ogla0ypbnlah092mhlsnho
   db:
     image: postgres:11.2-alpine
     ports:

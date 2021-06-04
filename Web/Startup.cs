@@ -13,6 +13,7 @@ using System.IO;
 using System.Reflection;
 using ThanhTuan.Quiz.Repositories;
 using ThanhTuan.Quiz.Services;
+using ThanhTuan.Quiz.Helpers;
 
 namespace ThanhTuan.Quiz
 {
@@ -35,10 +36,13 @@ namespace ThanhTuan.Quiz
         options.UseNpgsql(Configuration.GetConnectionString("DatabaseURL"));
       });
       services.AddHttpContextAccessor();
+      services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
       services.AddTransient<ExamRepository>();
       services.AddTransient<LabelRepository>();
       services.AddTransient<ExamRepository>();
       services.AddTransient<Authorizer>();
+      services.AddScoped<IUserRepository, UserRepository>();
+      services.AddScoped<IUserService, UserService>();
       services.AddSwaggerGen(c =>
         {
           c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -90,6 +94,7 @@ namespace ThanhTuan.Quiz
 
       app.UseRouting();
       app.UseCors("all");
+      app.UseMiddleware<JwtMiddleware>();
       app.UseEndpoints(endpoints =>
       {
         endpoints.MapControllers();

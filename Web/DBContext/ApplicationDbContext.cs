@@ -13,6 +13,7 @@ namespace ThanhTuan.Quiz.DBContext
     public DbSet<Label> Labels { get; set; }
     public DbSet<LabelKey> LabelKeys { get; set; }
     public DbSet<Collection> Collections { get; set; }
+    public DbSet<User> Users { get; set; }
     public ApplicationDbContext(
         DbContextOptions options) : base(options)
     {
@@ -40,7 +41,7 @@ namespace ThanhTuan.Quiz.DBContext
     // }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    => optionsBuilder.LogTo(Console.WriteLine);
+    => optionsBuilder.UseSnakeCaseNamingConvention();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
