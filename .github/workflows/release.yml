@@ -22,5 +22,5 @@ jobs:
       - name: Build and Push
         run: |
           echo "build and push $DOCKER_REPOSITORY/$CI_REPOSITORY_OWNER/$IMAGE:$CI_ACTION_REF_NAME"
-          docker build -t $DOCKER_REPOSITORY/$CI_REPOSITORY_OWNER/$IMAGE:$CI_ACTION_REF_NAME ./web/Dockerfile
+          docker build -t $DOCKER_REPOSITORY/$CI_REPOSITORY_OWNER/$IMAGE:$CI_ACTION_REF_NAME ./Web
           docker push $DOCKER_REPOSITORY/$CI_REPOSITORY_OWNER/$IMAGE:$CI_ACTION_REF_NAME
