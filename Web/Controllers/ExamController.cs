@@ -58,6 +58,18 @@ namespace ThanhTuan.Quiz.Controllers
       var exams = await _repo.GetExams(label);
       return exams.Select(exam => new Exam(exam)).ToList();
     }
+
+    /// <summary>
+    /// Get all exams
+    /// </summary>    
+    /// <returns>list of exams</returns>
+    [HttpGet("all")]
+    public async Task<ActionResult<List<Exam>>> GetAllExams()
+    {
+      var exams = await _repo.GetAllExams();
+      return exams.Select(exams => new Exam()).ToList();
+    }
+
     /// <summary>
     /// Update an exam
     /// </summary>

@@ -18,6 +18,12 @@ namespace ThanhTuan.Quiz.Repositories
       _repo = new Repository(db);
     }
 
+    public async Task<List<Exam>> GetAllExams()
+    {
+      return await _repo.List(_db.Exams.
+      Include(exam => exam.Labels));
+    }
+
     public async Task<List<Exam>> GetExams(string label)
     {
       return await _repo.List(_db.Exams.
