@@ -53,10 +53,10 @@ namespace ThanhTuan.Quiz.Controllers
     /// <param name="label"></param>
     /// <returns>list of exams</returns>
     [HttpGet("list")]
-    public async Task<ActionResult<List<Exam>>> GetExamList(string label)
+    public async Task<ActionResult<List<ExamEntry>>> GetExamList(string label)
     {
       var exams = await _repo.GetExams(label);
-      return exams.Select(exam => new Exam(exam)).ToList();
+      return exams.Select(exam => new ExamEntry(exam)).ToList();
     }
 
     /// <summary>
@@ -64,10 +64,10 @@ namespace ThanhTuan.Quiz.Controllers
     /// </summary>    
     /// <returns>list of exams</returns>
     [HttpGet("all")]
-    public async Task<ActionResult<List<Exam>>> GetAllExams()
+    public async Task<ActionResult<List<ExamEntry>>> GetAllExams()
     {
       var exams = await _repo.GetAllExams();
-      return exams.Select(exams => new Exam()).ToList();
+      return exams.Select(exam => new ExamEntry(exam)).ToList();
     }
 
     /// <summary>
