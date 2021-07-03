@@ -22,8 +22,18 @@ namespace ThanhTuan.Quiz.Controllers
     }
 
     [HttpGet]
-    public async Task<List<Models.CollectionEntry>> GetCollections()
+    public async Task<List<Models.CollectionEntry>> GetCollections(int? id)
     {
+      if (id != null)
+      {
+        var result = new List<Models.CollectionEntry>();
+        var entry = await _repo.GetCollectionById(id.Value);
+        if (entry)
+        {
+          result.Add(new Models.CollectionEntry(entry));
+        }
+        return result;
+      }
       var entities = await _repo.GetLabelCollections();
       return entities.Select(entity => new Models.CollectionEntry(entity)).ToList();
     }

@@ -41,6 +41,11 @@ namespace ThanhTuan.Quiz.Repositories
       return await _repo.List(_db.Collections.OrderBy(u => u.Rank));
     }
 
+    public async Task<Collection> GetCollectionById(int id)
+    {
+      return await _repo.FirstOrDefault(_db.Collection.Include(u => u.Labels).Where(u => u.Id == id));
+    }
+
     public async Task<Collection> GetCollectionBySlug(string slug)
     {
       return await _repo.FirstOrDefault(_db.Collections.Include(u => u.Labels).Where(u => u.Slug == slug));
