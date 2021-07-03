@@ -43,7 +43,7 @@ namespace ThanhTuan.Quiz.Repositories
 
     public async Task<Collection> GetCollectionById(int id)
     {
-      return await _repo.FirstOrDefault(_db.Collection.Include(u => u.Labels).Where(u => u.Id == id));
+      return await _repo.FirstOrDefault(_db.Collections.Include(u => u.Labels).Where(u => u.Id == id));
     }
 
     public async Task<Collection> GetCollectionBySlug(string slug)

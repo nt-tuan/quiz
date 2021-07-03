@@ -28,7 +28,7 @@ namespace ThanhTuan.Quiz.Controllers
       {
         var result = new List<Models.CollectionEntry>();
         var entry = await _repo.GetCollectionById(id.Value);
-        if (entry)
+        if (entry != null)
         {
           result.Add(new Models.CollectionEntry(entry));
         }
